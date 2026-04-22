@@ -12,11 +12,11 @@ var health = 100
 var current_move = ""
 var moves =[{
 	"name" : "jab",
-	"input" :[5,"H"]
+	"input" :["5","H"]
 },
 {
 	"name": "test",
-	"input" :[2,3,6,"H"]
+	"input" :["2","3","6","H"]
 }
 ]
 

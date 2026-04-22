@@ -28,7 +28,7 @@ var facing_right := true
 var input_buffer = []
 var time_buffer = []
 
-var last_dir = 5
+var last_dir = "5"
 
 # =========================
 # MAIN LOOP
@@ -66,17 +66,17 @@ func get_direction():
 	if not facing_right:
 		x *= -1
 
-	if x == 0 and y == 0: return 5
-	if x == 0 and y > 0: return 2
-	if x == 0 and y < 0: return 8
-	if x > 0 and y == 0: return 6
-	if x < 0 and y == 0: return 4
-	if x > 0 and y > 0: return 3
-	if x < 0 and y > 0: return 1
-	if x > 0 and y < 0: return 9
-	if x < 0 and y < 0: return 7
+	if x == 0 and y == 0: return "5"
+	if x == 0 and y > 0: return "8"
+	if x == 0 and y < 0: return "2"
+	if x > 0 and y == 0: return "6"
+	if x < 0 and y == 0: return "4"
+	if x > 0 and y > 0: return "9"
+	if x < 0 and y > 0: return "7"
+	if x > 0 and y < 0: return "3"
+	if x < 0 and y < 0: return "1"
 
-	return 5
+	return "5"
 
 # =========================
 # BUTTONS
