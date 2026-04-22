@@ -1,0 +1,35 @@
+[gd_scene load_steps=6 format=3 uid="uid://cijk6msgax5px"]
+
+[ext_resource type="Texture2D" uid="uid://8tq3am6ynxpy" path="res://bg.jpg" id="1_naslf"]
+[ext_resource type="PackedScene" uid="uid://bu30alc0nw373" path="res://player.tscn" id="2_dqjcw"]
+[ext_resource type="Script" path="res://player1_controller.gd" id="3_24tr6"]
+[ext_resource type="Script" path="res://dummy_controller.gd" id="4_h7woj"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_l7h3e"]
+size = Vector2(1144.5, 20)
+
+[node name="Stage" type="Node2D"]
+position = Vector2(34, 46)
+
+[node name="Bg" type="Sprite2D" parent="."]
+position = Vector2(541, 279)
+scale = Vector2(3.07754, 4.78148)
+texture = ExtResource("1_naslf")
+
+[node name="player" parent="." instance=ExtResource("2_dqjcw")]
+position = Vector2(109, 409)
+scale = Vector2(4, 4)
+
+[node name="Control" type="Node" parent="player"]
+script = ExtResource("3_24tr6")
+
+[node name="floor" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="floor"]
+position = Vector2(537, 563)
+shape = SubResource("RectangleShape2D_l7h3e")
+
+[node name="fighter" parent="." instance=ExtResource("2_dqjcw")]
+position = Vector2(761, 385)
+scale = Vector2(5, 5)
+script = ExtResource("4_h7woj")
