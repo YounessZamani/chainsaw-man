@@ -5,6 +5,8 @@ func control(body):
 	var dir = Input.get_axis("p1_left", "p1_right")
 	if body.wants_crouch and body.is_on_floor:
 		body.velocity.x = 0
+	elif body.is_on_floor and not body.movable :
+		body.velocity.x = 0
 	else:
 		body.velocity.x = dir * body.SPEED
 	if dir < 0:
@@ -24,5 +26,6 @@ func control(body):
 		else:
 			body.start_move("Punch")
 	
-
+	if Input.is_action_just_released("p1_down"):
+		body.jumpable= true
 	

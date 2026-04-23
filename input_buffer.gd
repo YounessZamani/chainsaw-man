@@ -38,7 +38,7 @@ func _process(_delta):
 
 	var dir = get_direction()
 
-	if dir != last_dir:
+	if dir != last_dir and dir != "5":
 		add_input(dir)
 		last_dir = dir
 
@@ -67,14 +67,14 @@ func get_direction():
 		x *= -1
 
 	if x == 0 and y == 0: return "5"
-	if x == 0 and y > 0: return "8"
-	if x == 0 and y < 0: return "2"
+	if x == 0 and y > 0: return "2"
+	if x == 0 and y < 0: return "8"
 	if x > 0 and y == 0: return "6"
 	if x < 0 and y == 0: return "4"
-	if x > 0 and y > 0: return "9"
-	if x < 0 and y > 0: return "7"
-	if x > 0 and y < 0: return "3"
-	if x < 0 and y < 0: return "1"
+	if x > 0 and y > 0: return "3"
+	if x < 0 and y > 0: return "1"
+	if x > 0 and y < 0: return "9"
+	if x < 0 and y < 0: return "7"
 
 	return "5"
 
@@ -85,10 +85,10 @@ func get_direction():
 func check_buttons():
 
 	if Input.is_action_just_pressed(punch_action):
-		add_input("P")
+		add_input("H")
 
 	if Input.is_action_just_pressed(kick_action):
-		add_input("K")
+		add_input("L")
 
 # =========================
 # BUFFER LOGIC

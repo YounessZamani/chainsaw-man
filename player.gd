@@ -1,5 +1,5 @@
 extends CharacterBody2D
-
+var movable = true
 const SPEED = 250
 const JUMP_FORCE = -450
 var jumpable = true
@@ -10,8 +10,9 @@ var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 var wants_crouch = false
 var health = 100
 var current_move = ""
+var hit_targets = []
 var moves =[{
-	"name" : "jab",
+	"name" : "Jab",
 	"input" :["5","H"]
 },
 {
@@ -27,7 +28,8 @@ enum State {
 	CROUCH_START,
 	CROUCH_HOLD,
 	CROUCH_END,
-	ATTACK
+	ATTACK,
+	HITSTUN
 }
 
 var state = State.IDLE
@@ -36,19 +38,24 @@ func _physics_process(delta):
 
 	if controller:
 		controller.control(self)
-
+	var move = get_move_from_input()
+	if move != "":
+		start_move(move)
 	if not is_on_floor():
 		velocity.y += gravity * delta
 
 	move_and_slide()
-
+	update_hitbox()
 	update_state()
 	update_animation()
 
 func update_state():
-
+	if state == State.HITSTUN:
+		return
 	if state == State.ATTACK:
 		jumpable = false
+		if is_on_floor() :
+			movable = false
 		return
 
 	if wants_crouch and is_on_floor():
@@ -75,6 +82,7 @@ func update_state():
 		state = State.RUN
 	else:
 		state = State.IDLE
+
 func update_animation():
 
 	match state:
@@ -99,7 +107,9 @@ func update_animation():
 		State.CROUCH_END:
 			if anim.animation != "CrouchEnd":
 				anim.play("CrouchEnd")
-
+		State.HITSTUN:
+			if anim.animation != "Punched":
+				anim.play("Punched")
 		State.ATTACK:
 			pass
 
@@ -107,7 +117,7 @@ func start_move(move_name):
 
 	if state == State.ATTACK:
 		return
-
+	hit_targets.clear()
 	state = State.ATTACK
 	current_move = move_name
 	anim.play(move_name)
@@ -118,6 +128,7 @@ func _on_sprites_animation_finished():
 		state = State.IDLE
 		current_move = ""
 		jumpable = true
+		movable = true
 
 	elif anim.animation == "CrouchStart":
 		state = State.CROUCH_HOLD
@@ -133,3 +144,25 @@ func get_move_from_input():
 			return move["name"]
 
 	return ""
+func update_hitbox():
+	if state == State.ATTACK and anim.frame == 3:
+		$hitbox.monitoring = true
+	else :
+		$hitbox.monitoring = false
+func _on_hitbox_area_entered(area):
+	var enemy = area.get_parent()
+	if enemy == self:
+		return
+	if enemy in hit_targets:
+		return
+	hit_targets.append(enemy)
+	enemy.take_hit(5,5,0.5)
+func take_hit(damage,push,stun):
+	health -= damage
+	velocity.x = push
+	state = State.HITSTUN
+	await get_tree().create_timer(stun).timeout
+	if state == State.HITSTUN:
+		state = State.IDLE
+	
+	 

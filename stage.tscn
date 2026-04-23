@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://cijk6msgax5px"]
+[gd_scene load_steps=7 format=3 uid="uid://cijk6msgax5px"]
 
 [ext_resource type="Texture2D" uid="uid://8tq3am6ynxpy" path="res://bg.jpg" id="1_naslf"]
 [ext_resource type="PackedScene" uid="uid://bu30alc0nw373" path="res://player.tscn" id="2_dqjcw"]
@@ -7,6 +7,9 @@
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_l7h3e"]
 size = Vector2(1144.5, 20)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_cj764"]
+size = Vector2(15, 633)
 
 [node name="Stage" type="Node2D"]
 position = Vector2(34, 46)
@@ -17,7 +20,7 @@ scale = Vector2(3.07754, 4.78148)
 texture = ExtResource("1_naslf")
 
 [node name="player" parent="." instance=ExtResource("2_dqjcw")]
-position = Vector2(109, 409)
+position = Vector2(121, 421)
 scale = Vector2(4, 4)
 
 [node name="Control" type="Node" parent="player"]
@@ -32,4 +35,18 @@ shape = SubResource("RectangleShape2D_l7h3e")
 [node name="fighter" parent="." instance=ExtResource("2_dqjcw")]
 position = Vector2(761, 385)
 scale = Vector2(5, 5)
+
+[node name="Control" type="Control" parent="fighter"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = -152.2
+offset_top = -77.0
+offset_right = -112.2
+offset_bottom = -37.0
 script = ExtResource("4_h7woj")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(2.5, 267.5)
+shape = SubResource("RectangleShape2D_cj764")
