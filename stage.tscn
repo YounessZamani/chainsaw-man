@@ -36,6 +36,9 @@ shape = SubResource("RectangleShape2D_l7h3e")
 position = Vector2(761, 385)
 scale = Vector2(5, 5)
 
+[node name="InputBuffer" parent="fighter" index="1"]
+enabled = false
+
 [node name="Control" type="Control" parent="fighter"]
 layout_mode = 3
 anchors_preset = 0
@@ -50,3 +53,6 @@ script = ExtResource("4_h7woj")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
 position = Vector2(2.5, 267.5)
 shape = SubResource("RectangleShape2D_cj764")
+
+[editable path="player"]
+[editable path="fighter"]

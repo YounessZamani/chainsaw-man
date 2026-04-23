@@ -12,12 +12,16 @@ var health = 100
 var current_move = ""
 var hit_targets = []
 var moves =[{
-	"name" : "Jab",
-	"input" :["5","H"]
+	"name":"low",
+	"input": ["2","H"]
 },
 {
 	"name": "test",
 	"input" :["2","3","6","H"]
+},
+{
+	"name" : "Punch",
+	"input" :["5","H"]
 }
 ]
 
@@ -41,6 +45,7 @@ func _physics_process(delta):
 	var move = get_move_from_input()
 	if move != "":
 		start_move(move)
+
 	if not is_on_floor():
 		velocity.y += gravity * delta
 
@@ -138,7 +143,8 @@ func _on_sprites_animation_finished():
 func set_crouch(value):
 	wants_crouch = value
 func get_move_from_input():
-
+	if state == State.ATTACK:
+		return ""
 	for move in moves:
 		if buffer.check_combo(move["input"]):
 			return move["name"]
@@ -156,7 +162,7 @@ func _on_hitbox_area_entered(area):
 	if enemy in hit_targets:
 		return
 	hit_targets.append(enemy)
-	enemy.take_hit(5,5,0.5)
+	enemy.take_hit(5,20,0.5)
 func take_hit(damage,push,stun):
 	health -= damage
 	velocity.x = push

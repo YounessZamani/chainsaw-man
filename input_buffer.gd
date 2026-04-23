@@ -18,7 +18,7 @@ extends Node
 
 @export var buffer_time := 0.5
 @export var deadzone := 0.2
-
+@export var enabled := true
 var facing_right := true
 
 # =========================
@@ -35,10 +35,11 @@ var last_dir = "5"
 # =========================
 
 func _process(_delta):
-
+	if not enabled:
+		return
 	var dir = get_direction()
 
-	if dir != last_dir and dir != "5":
+	if dir != last_dir :
 		add_input(dir)
 		last_dir = dir
 
@@ -85,6 +86,7 @@ func get_direction():
 func check_buttons():
 
 	if Input.is_action_just_pressed(punch_action):
+		add_input(get_direction())
 		add_input("H")
 
 	if Input.is_action_just_pressed(kick_action):
@@ -130,6 +132,7 @@ func check_combo(pattern):
 
 	if last_inputs == pattern:
 		clear_buffer()
+		last_dir = "5"
 		return true
 
 	return false
