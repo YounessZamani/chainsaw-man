@@ -1,5 +1,6 @@
 extends CharacterBody2D
 var movable = true
+var hit_active = false
 var look_right = true 
 const SPEED = 250
 const JUMP_FORCE = -450
@@ -15,15 +16,21 @@ var hit_targets = []
 var opponent
 var moves =[{
 	"name":"low",
-	"input": ["2","H"]
+	"input": ["2","H"],
+	"active_frame":3,
+	"end_frame" :6
 },
 {
 	"name": "test",
-	"input" :["2","3","6","H"]
+	"input" :["2","3","6","H"],
+	"active_frame":3,
+	"end_frame" :6
 },
 {
 	"name" : "Punch",
-	"input" :["5","H"]
+	"input" :["5","H"],
+	"active_frame":3,
+	"end_frame" :6
 }
 ]
 
@@ -52,7 +59,7 @@ func _physics_process(delta):
 
 	if not is_on_floor():
 		velocity.y += gravity * delta
-
+	check_hits()
 	move_and_slide()
 	update_hitbox()
 	update_state()
@@ -155,18 +162,12 @@ func get_move_from_input():
 
 	return ""
 func update_hitbox():
-	if state == State.ATTACK and anim.frame == 3:
-		$hitbox.monitoring = true
-	else :
-		$hitbox.monitoring = false
-func _on_hitbox_area_entered(area):
-	var enemy = area.get_parent()
-	if enemy == self:
+	if state != State.ATTACK:
 		return
-	if enemy in hit_targets:
-		return
-	hit_targets.append(enemy)
-	enemy.take_hit(5,20,0.5)
+
+	var move = get_current_move_data()
+
+	hit_active = (anim.frame >= move["active_frame"] and anim.frame <= move["end_frame"])
 func take_hit(damage,push,stun):
 	health -= damage
 	velocity.x = push
@@ -182,3 +183,21 @@ func find_opponent():
 	for f in get_tree().get_nodes_in_group("Fighters"):
 		if f!= self:
 			opponent = f
+func check_hits():
+	if not hit_active:
+		return
+	for area in $hitbox.get_overlapping_areas():
+		
+		if area.is_in_group("Hurtbox") and area.get_parent()!= self:
+			var enemy = area.get_parent()
+
+			if enemy in hit_targets:
+				continue
+
+			hit_targets.append(enemy)
+			enemy.take_hit(5, 100, 0.5)
+func get_current_move_data():
+	for move in moves:
+		if move["name"] == current_move:
+			return move
+	return null
