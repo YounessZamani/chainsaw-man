@@ -9,10 +9,10 @@ func control(body):
 		body.velocity.x = 0
 	else:
 		body.velocity.x = dir * body.SPEED
-	if dir < 0:
-		body.anim.flip_h = true
-	elif dir > 0:
+	if body.look_right:
 		body.anim.flip_h = false
+	else :
+		body.anim.flip_h = true
 	if Input.is_action_pressed("p1_down") and body.is_on_floor():
 		body.set_crouch(true)
 	else:

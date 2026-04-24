@@ -1,5 +1,6 @@
 extends CharacterBody2D
 var movable = true
+var look_right = true 
 const SPEED = 250
 const JUMP_FORCE = -450
 var jumpable = true
@@ -11,6 +12,7 @@ var wants_crouch = false
 var health = 100
 var current_move = ""
 var hit_targets = []
+var opponent
 var moves =[{
 	"name":"low",
 	"input": ["2","H"]
@@ -37,7 +39,9 @@ enum State {
 }
 
 var state = State.IDLE
-
+func _ready():
+	find_opponent()
+	buffer.body = self
 func _physics_process(delta):
 
 	if controller:
@@ -53,7 +57,7 @@ func _physics_process(delta):
 	update_hitbox()
 	update_state()
 	update_animation()
-
+	updateside()
 func update_state():
 	if state == State.HITSTUN:
 		return
@@ -170,5 +174,11 @@ func take_hit(damage,push,stun):
 	await get_tree().create_timer(stun).timeout
 	if state == State.HITSTUN:
 		state = State.IDLE
-	
-	 
+func updateside():
+	if opponent == null : return
+	if opponent.global_position.x - self.global_position.x >0 : look_right = true
+	elif opponent.global_position.x - self.global_position.x <0 : look_right = false
+func find_opponent():
+	for f in get_tree().get_nodes_in_group("Fighters"):
+		if f!= self:
+			opponent = f

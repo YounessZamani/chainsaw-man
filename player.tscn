@@ -299,7 +299,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"CrouchEnd",
-"speed": 5.0
+"speed": 15.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -321,7 +321,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"CrouchStart",
-"speed": 5.0
+"speed": 23.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -592,17 +592,19 @@ animations = [{
 size = Vector2(34, 16)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_lhpck"]
-size = Vector2(24, 45)
+size = Vector2(24.4, 41.3)
 
 [node name="fighter" type="CharacterBody2D"]
+position = Vector2(4, 1)
 script = ExtResource("1_51a1q")
+metadata/_edit_group_ = true
 
 [node name="sprites" type="AnimatedSprite2D" parent="."]
 position = Vector2(-1, -12)
 scale = Vector2(1.10938, 1.10938)
 sprite_frames = SubResource("SpriteFrames_8v265")
-animation = &"Jab"
-frame = 3
+animation = &"CrouchEnd"
+frame = 2
 frame_progress = 1.0
 
 [node name="InputBuffer" type="Node" parent="."]

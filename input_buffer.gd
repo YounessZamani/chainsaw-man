@@ -19,7 +19,7 @@ extends Node
 @export var buffer_time := 0.5
 @export var deadzone := 0.2
 @export var enabled := true
-var facing_right := true
+var body
 
 # =========================
 # STORAGE
@@ -64,7 +64,7 @@ func get_direction():
 	x = sign(x)
 	y = sign(y)
 
-	if not facing_right:
+	if body and not body.look_right:
 		x *= -1
 
 	if x == 0 and y == 0: return "5"
