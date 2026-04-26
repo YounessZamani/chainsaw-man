@@ -8,7 +8,7 @@ var jumpable = true
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 @onready var buffer = $InputBuffer
 @onready var anim = $sprites
-@onready var controller = $Control
+@onready var controller = $Controller
 var wants_crouch = false
 var health = 100
 var current_move = ""
@@ -59,12 +59,14 @@ func _physics_process(delta):
 
 	if not is_on_floor():
 		velocity.y += gravity * delta
+	updateside()
 	check_hits()
 	move_and_slide()
+	update_hitbox_position()
 	update_hitbox()
 	update_state()
 	update_animation()
-	updateside()
+	
 func update_state():
 	if state == State.HITSTUN:
 		return
@@ -145,6 +147,7 @@ func _on_sprites_animation_finished():
 		current_move = ""
 		jumpable = true
 		movable = true
+		hit_active = false
 
 	elif anim.animation == "CrouchStart":
 		state = State.CROUCH_HOLD
@@ -201,3 +204,9 @@ func get_current_move_data():
 		if move["name"] == current_move:
 			return move
 	return null
+func update_hitbox_position():
+	if look_right:
+		$hitbox.scale.x = 1
+		
+	else:
+		$hitbox.scale.x =-1

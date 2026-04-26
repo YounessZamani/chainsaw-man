@@ -1,45 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://cijk6msgax5px"]
+[gd_scene load_steps=5 format=3 uid="uid://cijk6msgax5px"]
 
 [ext_resource type="Texture2D" uid="uid://8tq3am6ynxpy" path="res://bg.jpg" id="1_naslf"]
 [ext_resource type="PackedScene" uid="uid://bu30alc0nw373" path="res://Fighter.tscn" id="2_dqjcw"]
-[ext_resource type="Script" path="res://scripts/Controller.gd" id="3_24tr6"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_l7h3e"]
 size = Vector2(1144.5, 20)
-
-[sub_resource type="GDScript" id="GDScript_q60k6"]
-script/source = "extends Node
-
-func control(body):
-	
-	var dir = body.buffer.get_direction()
-	if body.wants_crouch and body.is_on_floor():
-		body.velocity.x = 0
-	elif body.is_on_floor() and not body.movable :
-		body.velocity.x = 0
-	else:
-		if dir in [\"6\",\"9\"]:
-			body.velocity.x = body.SPEED if body.look_right else -body.SPEED
-		elif dir in [\"4\",\"7\"]:
-			body.velocity.x = -body.SPEED if body.look_right else body.SPEED
-		else:
-			body.velocity.x = 0
-	if body.look_right:
-		body.anim.flip_h = false
-	else :
-		body.anim.flip_h = true
-	if dir in [\"1\",\"2\",\"3\"] and body.is_on_floor():
-		body.set_crouch(true)
-	else:
-		body.set_crouch(false)
-	if dir in [\"7\",\"8\",\"9\"] and body.is_on_floor() and  body.jumpable:
-		body.velocity.y = body.JUMP_FORCE
-
-	
-	if dir not in [\"1\",\"2\",\"3\"]:
-		body.jumpable= true
-	
-"
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_cj764"]
 size = Vector2(15, 633)
@@ -54,14 +19,15 @@ texture = ExtResource("1_naslf")
 metadata/_edit_lock_ = true
 
 [node name="player" parent="." groups=["Fighters"] instance=ExtResource("2_dqjcw")]
-position = Vector2(621, 458)
-scale = Vector2(4, 4)
+position = Vector2(653, 433)
+scale = Vector2(5.261, 4)
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" parent="player/hurtbox" index="0"]
+position = Vector2(0, -2.55)
 
 [node name="CollisionShape2D" parent="player" index="4"]
 position = Vector2(-1.25, 7.25)
-
-[node name="Control" type="Node" parent="player"]
-script = ExtResource("3_24tr6")
 
 [node name="floor" type="StaticBody2D" parent="."]
 
@@ -87,15 +53,6 @@ kick_action = "p2_L"
 
 [node name="CollisionShape2D" parent="fighter" index="4"]
 position = Vector2(-2.14577e-06, 10.25)
-
-[node name="Control" type="Control" parent="fighter"]
-layout_mode = 3
-anchors_preset = 0
-offset_left = -152.2
-offset_top = -77.0
-offset_right = -112.2
-offset_bottom = -37.0
-script = SubResource("GDScript_q60k6")
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
 

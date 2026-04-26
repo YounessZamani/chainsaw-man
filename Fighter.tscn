@@ -1,9 +1,10 @@
-[gd_scene load_steps=82 format=3 uid="uid://bu30alc0nw373"]
+[gd_scene load_steps=83 format=3 uid="uid://bu30alc0nw373"]
 
 [ext_resource type="Script" path="res://scripts/Fighter.gd" id="1_51a1q"]
 [ext_resource type="Texture2D" uid="uid://b0xebpi0lp8mb" path="res://sprites/TheDummyAnim-SpriteSheet.png" id="2_2sde4"]
 [ext_resource type="Texture2D" uid="uid://dh3fur0yif4a5" path="res://sprites/Harpy Fighter/Harpy Fighter/Sprite Sheets/Sheet235B.png" id="3_r6mar"]
 [ext_resource type="Script" path="res://scripts/input_buffer.gd" id="3_vhkdf"]
+[ext_resource type="Script" path="res://scripts/Controller.gd" id="5_sknr6"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1c0fd"]
 atlas = ExtResource("2_2sde4")
@@ -586,13 +587,14 @@ animations = [{
 size = Vector2(27, 16)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_lhpck"]
-size = Vector2(24.4, 41.3)
+size = Vector2(24.4, 46.4)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0ieha"]
 size = Vector2(24.4, 31.325)
 
 [node name="fighter" type="CharacterBody2D"]
-position = Vector2(-2, 1)
+position = Vector2(2, -1.19209e-07)
+scale = Vector2(1.07565, 1.02151)
 script = ExtResource("1_51a1q")
 
 [node name="sprites" type="AnimatedSprite2D" parent="."]
@@ -609,7 +611,7 @@ collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="hitbox"]
 modulate = Color(1, 0.0235294, 0, 1)
-position = Vector2(21, -1)
+position = Vector2(21.3824, -2.93682)
 shape = SubResource("RectangleShape2D_sy0bb")
 metadata/_edit_group_ = true
 
@@ -623,6 +625,15 @@ debug_color = Color(0.596078, 0.509804, 0.545098, 0.419608)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(-1, 5.6625)
 shape = SubResource("RectangleShape2D_0ieha")
+
+[node name="Controller" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+scale = Vector2(0.338862, 0.549928)
+script = ExtResource("5_sknr6")
+metadata/_edit_use_anchors_ = true
 
 [connection signal="animation_finished" from="sprites" to="." method="_on_sprites_animation_finished"]
 [connection signal="area_entered" from="hitbox" to="." method="_on_hitbox_area_entered"]
