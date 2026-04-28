@@ -1,212 +1,231 @@
 extends CharacterBody2D
+
+
+
 var movable = true
+var jumpable = true
 var hit_active = false
-var look_right = true 
+var look_right = true
+var wants_crouch = false
+
+var health = 100
+var opponent = null
+
 const SPEED = 250
 const JUMP_FORCE = -450
-var jumpable = true
+
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
+
+
+
+var current_move = ""
+var current_move_data = {}
+var move_timer = 0
+var hit_targets = []
+
+var hitstun_time = 0
+
+
+
 @onready var buffer = $InputBuffer
 @onready var anim = $sprites
 @onready var controller = $Controller
-var wants_crouch = false
-var health = 100
-var current_move = ""
-var hit_targets = []
-var opponent
-var moves =[{
+@onready var state_machine = $StateMachine
+@onready var hitbox = $hitbox
+
+
+var moves = [
+{
+	"name":"test",
+	"input":["2","3","6","H"],
+	"startup":3,
+	"active":4,
+	"recovery":3,
+	"damage":10,
+	"push":150,
+	"stun":30,
+	"ground_ok":true,
+	"air_ok":false
+},
+{
 	"name":"low",
-	"input": ["2","H"],
-	"active_frame":3,
-	"end_frame" :6
-},
-{
-	"name": "test",
-	"input" :["2","3","6","H"],
-	"active_frame":3,
-	"end_frame" :6
-},
-{
-	"name" : "Punch",
-	"input" :["5","H"],
-	"active_frame":3,
-	"end_frame" :6
+	"input":["2","H"],
+	"startup":3,
+	"active":2,
+	"recovery":2,
+	"damage":7,
+	"push":120,
+	"stun":24,
+	"ground_ok":true,
+	"air_ok":false
+},{
+	"name":"Punch",
+	"input":["H"],
+	"startup":3,
+	"active":2,
+	"recovery":2,
+	"damage":5,
+	"push":100,
+	"stun":20,
+	"ground_ok":true,
+	"air_ok":true
 }
+
 ]
 
-enum State {
-	IDLE,
-	RUN,
-	JUMP,
-	CROUCH_START,
-	CROUCH_HOLD,
-	CROUCH_END,
-	ATTACK,
-	HITSTUN
-}
 
-var state = State.IDLE
+
 func _ready():
-	find_opponent()
 	buffer.body = self
+	find_opponent()
+	state_machine.start(self)
+
+
 func _physics_process(delta):
 
 	if controller:
 		controller.control(self)
-	var move = get_move_from_input()
-	if move != "":
-		start_move(move)
 
-	if not is_on_floor():
+	if !is_on_floor():
 		velocity.y += gravity * delta
+
 	updateside()
+
+	state_machine.physics_update(delta)
+
 	check_hits()
+
 	move_and_slide()
+
 	update_hitbox_position()
-	update_hitbox()
-	update_state()
-	update_animation()
-	
-func update_state():
-	if state == State.HITSTUN:
-		return
-	if state == State.ATTACK:
-		jumpable = false
-		if is_on_floor() :
-			movable = false
-		return
 
-	if wants_crouch and is_on_floor():
-
-		if state != State.CROUCH_START and state != State.CROUCH_HOLD:
-			state = State.CROUCH_START
-			jumpable = false
-
-		return
-
-	if state == State.CROUCH_HOLD:
-		state = State.CROUCH_END
-		return
-
-	if state == State.CROUCH_END:
-		jumpable = true
-		return
-
-	if not is_on_floor():
-		state = State.JUMP
-		return
-
-	if abs(velocity.x) > 0:
-		state = State.RUN
-	else:
-		state = State.IDLE
-
-func update_animation():
-
-	match state:
-
-		State.IDLE:
-			anim.play("Idle")
-
-		State.RUN:
-			anim.play("Run")
-
-		State.JUMP:
-			anim.play("Jump")
-
-		State.CROUCH_START:
-			if anim.animation != "CrouchStart":
-				anim.play("CrouchStart")
-
-		State.CROUCH_HOLD:
-			if anim.animation != "CrouchHold":
-				anim.play("CrouchHold")
-
-		State.CROUCH_END:
-			if anim.animation != "CrouchEnd":
-				anim.play("CrouchEnd")
-		State.HITSTUN:
-			if anim.animation != "Punched":
-				anim.play("Punched")
-		State.ATTACK:
-			pass
-
-func start_move(move_name):
-
-	if state == State.ATTACK:
-		return
-	hit_targets.clear()
-	state = State.ATTACK
-	current_move = move_name
-	anim.play(move_name)
-
-func _on_sprites_animation_finished():
-
-	if state == State.ATTACK:
-		state = State.IDLE
-		current_move = ""
-		jumpable = true
-		movable = true
-		hit_active = false
-
-	elif anim.animation == "CrouchStart":
-		state = State.CROUCH_HOLD
-
-	elif anim.animation == "CrouchEnd":
-		state = State.IDLE
 func set_crouch(value):
 	wants_crouch = value
+
 func get_move_from_input():
-	if state == State.ATTACK:
-		return ""
+
+	var grounded = is_on_floor()
+
 	for move in moves:
+
 		if buffer.check_combo(move["input"]):
-			return move["name"]
+
+			if grounded and move["ground_ok"]:
+				return move["name"]
+
+			if !grounded and move["air_ok"]:
+				return move["name"]
 
 	return ""
-func update_hitbox():
-	if state != State.ATTACK:
-		return
 
-	var move = get_current_move_data()
+func get_current_move_data():
 
-	hit_active = (anim.frame >= move["active_frame"] and anim.frame <= move["end_frame"])
-func take_hit(damage,push,stun):
+	for move in moves:
+		if move["name"] == current_move:
+			return move
+
+	return null
+
+
+func take_hit(damage, push, stun):
+
 	health -= damage
-	velocity.x = push
-	state = State.HITSTUN
-	await get_tree().create_timer(stun).timeout
-	if state == State.HITSTUN:
-		state = State.IDLE
-func updateside():
-	if opponent == null : return
-	if opponent.global_position.x - self.global_position.x >0 : look_right = true
-	elif opponent.global_position.x - self.global_position.x <0 : look_right = false
-func find_opponent():
-	for f in get_tree().get_nodes_in_group("Fighters"):
-		if f!= self:
-			opponent = f
+	if !look_right:
+		velocity.x = push
+	else: velocity.x = -push
+	hitstun_time = stun
+
+	state_machine.change_state("Hitstun")
+
+# =========================
+# HIT DETECTION
+# =========================
+
 func check_hits():
-	if not hit_active:
+
+	if !hit_active:
 		return
-	for area in $hitbox.get_overlapping_areas():
-		
-		if area.is_in_group("Hurtbox") and area.get_parent()!= self:
+
+	for area in hitbox.get_overlapping_areas():
+
+		if area.is_in_group("Hurtbox") and area.get_parent() != self:
+
 			var enemy = area.get_parent()
 
 			if enemy in hit_targets:
 				continue
 
 			hit_targets.append(enemy)
-			enemy.take_hit(5, 100, 0.5)
-func get_current_move_data():
-	for move in moves:
-		if move["name"] == current_move:
-			return move
-	return null
+
+			var move = current_move_data
+
+			enemy.take_hit(
+				move["damage"],
+				move["push"],
+				move["stun"]
+			)
+
+
+
+func updateside():
+
+	if opponent == null:
+		return
+
+	if opponent.global_position.x > global_position.x:
+		look_right = true
+	elif opponent.global_position.x < global_position.x:
+		look_right = false
+
 func update_hitbox_position():
+
 	if look_right:
-		$hitbox.scale.x = 1
-		
+		hitbox.scale.x = 1
+		anim.flip_h = false
 	else:
-		$hitbox.scale.x =-1
+		hitbox.scale.x = -1
+		anim.flip_h = true
+
+func is_in_state(state_name):
+	return state_machine.current_state.name == state_name
+
+func find_opponent():
+
+	for f in get_tree().get_nodes_in_group("Fighters"):
+		if f != self:
+			opponent = f
+func get_move_data_by_name(Name):
+
+	for move in moves:
+		if move["name"] == Name:
+			return move
+
+	return null
+func frames(n):
+	return n / 60.0
+
+
+func _on_sprites_frame_changed():
+
+	if current_move_data.is_empty(): return
+	var f = anim.frame 
+	var startup = current_move_data["startup"]
+	var active = current_move_data["active"] 
+	var recovery = current_move_data["recovery"]
+	 # startup -> active 
+	if f == startup: 
+		state_machine.change_state("Attack_Active") 
+		hit_active = true
+	 # active -> recovery 
+	elif f == startup + active: 
+		state_machine.change_state("Attack_Recovery") 
+		hit_active = false
+	
+
+func _on_sprites_animation_finished():
+	if state_machine.current_state.name.begins_with("Attack"):
+		hit_active = false
+		movable = true
+		current_move = ""
+		current_move_data = {}
+		state_machine.change_state("Idle")# Replace with function body.

@@ -1,9 +1,10 @@
 extends Node
 
 func control(body):
-	if body.state == body.State.HITSTUN:
+	if body.is_in_state("Hitstun"):
 		return
 	var dir = body.buffer.get_direction()
+	var last= body.buffer.last_dir
 	if body.wants_crouch and body.is_on_floor():
 		body.velocity.x = 0
 	elif body.is_on_floor() and not body.movable :

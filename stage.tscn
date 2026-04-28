@@ -19,7 +19,7 @@ texture = ExtResource("1_naslf")
 metadata/_edit_lock_ = true
 
 [node name="player" parent="." groups=["Fighters"] instance=ExtResource("2_dqjcw")]
-position = Vector2(653, 433)
+position = Vector2(726, 431)
 scale = Vector2(5.261, 4)
 metadata/_edit_group_ = true
 
@@ -50,6 +50,9 @@ up_action = "p2_up"
 down_action = "p2_down"
 punch_action = "p2_H"
 kick_action = "p2_L"
+
+[node name="CollisionShape2D" parent="fighter/hurtbox" index="0"]
+position = Vector2(0.599998, -0.900002)
 
 [node name="CollisionShape2D" parent="fighter" index="4"]
 position = Vector2(-2.14577e-06, 10.25)

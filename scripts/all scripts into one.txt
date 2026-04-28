@@ -1,0 +1,661 @@
+				Fighter.gd:
+extends CharacterBody2D
+
+
+
+var movable = true
+var jumpable = true
+var hit_active = false
+var look_right = true
+var wants_crouch = false
+
+var health = 100
+var opponent = null
+
+const SPEED = 250
+const JUMP_FORCE = -450
+
+var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
+
+
+
+var current_move = ""
+var current_move_data = {}
+var move_timer = 0
+var hit_targets = []
+
+var hitstun_time = 0
+
+
+
+@onready var buffer = $InputBuffer
+@onready var anim = $sprites
+@onready var controller = $Controller
+@onready var state_machine = $StateMachine
+@onready var hitbox = $hitbox
+
+
+var moves = [
+{
+	"name":"Punch",
+	"input":["H"],
+	"startup":4,
+	"active":3,
+	"recovery":10,
+	"damage":5,
+	"push":100,
+	"stun":20,
+	"ground_ok":true,
+	"air_ok":true
+},
+{
+	"name":"low",
+	"input":["2","H"],
+	"startup":6,
+	"active":4,
+	"recovery":14,
+	"damage":7,
+	"push":120,
+	"stun":24,
+	"ground_ok":true,
+	"air_ok":false
+},
+{
+	"name":"test",
+	"input":["2","3","6","H"],
+	"startup":8,
+	"active":5,
+	"recovery":18,
+	"damage":10,
+	"push":150,
+	"stun":30,
+	"ground_ok":true,
+	"air_ok":false
+}
+]
+
+
+
+func _ready():
+	buffer.body = self
+	find_opponent()
+	state_machine.start(self)
+
+
+func _physics_process(delta):
+
+	if controller:
+		controller.control(self)
+
+	if !is_on_floor():
+		velocity.y += gravity * delta
+
+	updateside()
+
+	state_machine.physics_update(delta)
+
+	check_hits()
+
+	move_and_slide()
+
+	update_hitbox_position()
+
+func set_crouch(value):
+	wants_crouch = value
+
+func get_move_from_input():
+
+	var grounded = is_on_floor()
+
+	for move in moves:
+
+		if buffer.check_combo(move["input"]):
+
+			if grounded and move["ground_ok"]:
+				return move["name"]
+
+			if !grounded and move["air_ok"]:
+				return move["name"]
+
+	return ""
+
+func get_current_move_data():
+
+	for move in moves:
+		if move["name"] == current_move:
+			return move
+
+	return null
+
+
+func take_hit(damage, push, stun):
+
+	health -= damage
+	velocity.x = push
+
+	hitstun_time = stun
+
+	state_machine.change_state("HITSTUN")
+
+# =========================
+# HIT DETECTION
+# =========================
+
+func check_hits():
+
+	if !hit_active:
+		return
+
+	for area in hitbox.get_overlapping_areas():
+
+		if area.is_in_group("Hurtbox") and area.get_parent() != self:
+
+			var enemy = area.get_parent()
+
+			if enemy in hit_targets:
+				continue
+
+			hit_targets.append(enemy)
+
+			var move = current_move_data
+
+			enemy.take_hit(
+				move["damage"],
+				move["push"],
+				move["stun"]
+			)
+
+
+
+func updateside():
+
+	if opponent == null:
+		return
+
+	if opponent.global_position.x > global_position.x:
+		look_right = true
+	elif opponent.global_position.x < global_position.x:
+		look_right = false
+
+func update_hitbox_position():
+
+	if look_right:
+		hitbox.scale.x = 1
+		anim.flip_h = false
+	else:
+		hitbox.scale.x = -1
+		anim.flip_h = true
+
+func is_in_state(state_name):
+	return state_machine.current_state.name == state_name
+
+func find_opponent():
+
+	for f in get_tree().get_nodes_in_group("Fighters"):
+		if f != self:
+			opponent = f
+func get_move_data_by_name(Name):
+
+	for move in moves:
+		if move["name"] == Name:
+			return move
+
+	return null
+						Controller.gd
+extends Node
+
+func control(body):
+	if body.is_in_state("Hitstun"):
+		return
+	var dir = body.buffer.get_direction()
+	if body.wants_crouch and body.is_on_floor():
+		body.velocity.x = 0
+	elif body.is_on_floor() and not body.movable :
+		body.velocity.x = 0
+	else:
+		if dir in ["6","9"]:
+			body.velocity.x = body.SPEED if body.look_right else -body.SPEED
+		elif dir in ["4","7"]:
+			body.velocity.x = -body.SPEED if body.look_right else body.SPEED
+		else:
+			body.velocity.x = 0
+	if body.look_right:
+		body.anim.flip_h = false
+	else :
+		body.anim.flip_h = true
+	if dir in ["1","2","3"] and body.is_on_floor():
+		body.set_crouch(true)
+	else:
+		body.set_crouch(false)
+	if dir in ["7","8","9"] and body.is_on_floor() and  body.jumpable:
+		body.velocity.y =1.8* body.JUMP_FORCE
+
+	
+	if dir not in ["1","2","3"]:
+		body.jumpable= true
+	
+						input-buffer
+	extends Node
+
+# =========================
+# INPUT ACTION NAMES
+# =========================
+
+@export var left_action  = "p1_left"
+@export var right_action = "p1_right"
+@export var up_action    = "p1_up"
+@export var down_action  = "p1_down"
+
+@export var punch_action = "p1_H"
+@export var kick_action  = "p1_L"
+
+# =========================
+# SETTINGS
+# =========================
+
+@export var buffer_time := 0.5
+@export var deadzone := 0.2
+@export var enabled := true
+var body
+
+# =========================
+# STORAGE
+# =========================
+
+var input_buffer = []
+var time_buffer = []
+
+var last_dir = "5"
+
+# =========================
+# MAIN LOOP
+# =========================
+
+func _process(_delta):
+	if not enabled:
+		return
+	var dir = get_direction()
+
+	if dir != last_dir :
+		add_input(dir)
+		last_dir = dir
+
+	check_buttons()
+	clean_buffer()
+
+# =========================
+# DIRECTION INPUT
+# =========================
+
+func get_direction():
+
+	var x = Input.get_axis(left_action, right_action)
+	var y = Input.get_axis(up_action, down_action)
+
+	if abs(x) < deadzone:
+		x = 0
+
+	if abs(y) < deadzone:
+		y = 0
+
+	x = sign(x)
+	y = sign(y)
+
+	if body and not body.look_right:
+		x *= -1
+
+	if x == 0 and y == 0: return "5"
+	if x == 0 and y > 0: return "2"
+	if x == 0 and y < 0: return "8"
+	if x > 0 and y == 0: return "6"
+	if x < 0 and y == 0: return "4"
+	if x > 0 and y > 0: return "3"
+	if x < 0 and y > 0: return "1"
+	if x > 0 and y < 0: return "9"
+	if x < 0 and y < 0: return "7"
+
+	return "5"
+
+# =========================
+# BUTTONS
+# =========================
+
+func check_buttons():
+
+	if Input.is_action_just_pressed(punch_action):
+		add_input(get_direction())
+		add_input("H")
+
+	if Input.is_action_just_pressed(kick_action):
+		add_input("L")
+
+# =========================
+# BUFFER LOGIC
+# =========================
+
+func add_input(value):
+
+	var t = Time.get_ticks_msec() / 1000.0
+
+	input_buffer.append(value)
+	time_buffer.append(t)
+
+func clean_buffer():
+
+	var now = Time.get_ticks_msec() / 1000.0
+
+	while time_buffer.size() > 0 and now - time_buffer[0] > buffer_time:
+		time_buffer.pop_front()
+		input_buffer.pop_front()
+
+func simplify_buffer():
+
+	var result = []
+
+	for i in input_buffer:
+		if result.is_empty() or result[-1] != i:
+			result.append(i)
+
+	return result
+
+func check_combo(pattern):
+
+	var recent = simplify_buffer()
+
+	if recent.size() < pattern.size():
+		return false
+
+	var last_inputs = recent.slice(recent.size() - pattern.size(), recent.size())
+
+	if last_inputs == pattern:
+		clear_buffer()
+		last_dir = "5"
+		return true
+
+	return false
+
+func clear_buffer():
+	input_buffer.clear()
+	time_buffer.clear()
+							State.gd
+extends Node
+class_name State
+
+var fighter
+var machine
+
+func enter():
+	pass
+
+func exit():
+	pass
+
+func physics_update(_delta):
+	pass
+							State machine
+extends Node
+
+var fighter
+var current_state : State
+
+func start(body):
+	fighter = body
+
+	for child in get_children():
+		if child is State:
+			child.fighter = fighter
+			child.machine = self
+
+	change_state("Idle")
+
+func physics_update(delta):
+	if current_state:
+		current_state.physics_update(delta)
+
+func change_state(Name):
+	if current_state:
+		current_state.exit()
+
+	current_state = get_node(Name)
+	current_state.enter()
+	
+						Idle
+extends State
+
+func enter():
+	fighter.anim.play("Idle")
+
+func physics_update(_delta):
+	if fighter.state_machine.current_state.name.begins_with("Attack"):
+		return
+	var move = fighter.get_move_from_input()
+
+	if move != "":
+		fighter.current_move_data = fighter.get_move_data_by_name(move)
+		machine.change_state("Attack_Startup")
+		return
+
+	if !fighter.is_on_floor() :
+		machine.change_state("Jump")
+		return
+
+	if fighter.wants_crouch:
+		machine.change_state("Crouch_Start")
+		return
+
+	if abs(fighter.velocity.x) > 0:
+		machine.change_state("Walk")
+		return
+								walk
+extends State
+
+func enter():
+	fighter.anim.play("Walk")
+
+func physics_update(_delta):
+	if fighter.state_machine.current_state.name.begins_with("Attack"):
+		return
+	var move = fighter.get_move_from_input()
+
+	if move != "":
+		fighter.current_move_data = fighter.get_move_data_by_name(move)
+		machine.change_state("Attack_Startup")
+		return
+
+	if !fighter.is_on_floor():
+		machine.change_state("Jump")
+		return
+
+	if fighter.wants_crouch:
+		machine.change_state("Crouch_Start")
+		return
+
+	if fighter.velocity.x == 0:
+		machine.change_state("Idle")
+		return
+					Jump
+extends State
+
+func enter():
+	fighter.anim.play("Jump")
+
+func physics_update(_delta):
+	if fighter.state_machine.current_state.name.begins_with("Attack"):
+		return
+	var move = fighter.get_move_from_input()
+
+	if move != "":
+		fighter.current_move_data = fighter.get_move_data_by_name(move)
+		machine.change_state("Attack_Startup")
+		return
+
+	if fighter.velocity.y == 0:
+		machine.change_state("Fall")
+		return
+							Crouch_Start
+	extends State
+
+
+# Called when the node enters the scene tree for the first time.
+func enter():
+	fighter.anim.play("CrouchStart")
+	fighter.movable = false# Replace with function body.
+	fighter.jumpable = false
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func physics_update(_delta):
+	if !fighter.is_on_floor():
+		machine.change_state("Jump")
+		return
+
+	if !fighter.anim.is_playing():
+		if fighter.wants_crouch:
+			machine.change_state("Crouch_Hold")
+		else:
+			machine.change_state("Crouch_End")
+		return
+						crouch_Hold
+extends State
+
+
+# Called when the node enters the scene tree for the first time.
+func enter():
+	fighter.anim.play("CrouchHold") # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func physics_update(_delta):
+	fighter.velocity.x = 0
+
+	var move = fighter.get_move_from_input()
+	if move != "":
+		machine.change_state("Attack_Startup")
+		return
+
+	if !fighter.is_on_floor():
+		machine.change_state("Jump")
+		return
+
+	if !fighter.wants_crouch:
+		machine.change_state("Crouch_End")
+		return
+							Crouch_End:
+extends State
+
+
+# Called when the node enters the scene tree for the first time.
+func enter():
+	fighter.anim.play("CrouchEnd")
+	fighter.jumpable= true
+	fighter.movable = true
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func physics_update(_delta):
+	if !fighter.is_on_floor():
+		machine.change_state("Jump")
+		return
+
+	if !fighter.anim.is_playing():
+		if abs(fighter.velocity.x) > 0:
+			machine.change_state("Walk")
+		else:
+			machine.change_state("Idle")
+		return
+						Attack_Startupextends State
+
+func enter():
+
+	if fighter.current_move_data == null:
+		push_error("Attack entered with NULL move data")
+		machine.change_state("Idle")
+		return
+
+	fighter.move_timer = fighter.current_move_data["startup"]
+
+	fighter.hit_active = false
+	fighter.movable = false
+
+	fighter.anim.play(fighter.current_move_data["name"])
+func physics_update(_delta):
+
+	fighter.move_timer -= 1
+
+	if fighter.move_timer <= 0:
+		machine.change_state("Attack_Active")
+							Attack_Active
+	extends State
+
+func enter():
+
+	fighter.move_timer = fighter.current_move_data["active"]
+
+	fighter.hit_active = true
+
+func physics_update(_delta):
+
+	fighter.move_timer -= 1
+
+	if fighter.move_timer <= 0:
+		machine.change_state("Attack_Recovery")
+		return
+						Attack_Recovery
+extends State
+
+func enter():
+
+	fighter.move_timer = fighter.current_move_data["recovery"]
+
+	fighter.hit_active = false
+
+func physics_update(_delta):
+
+	fighter.move_timer -= 1
+
+	if fighter.move_timer <= 0:
+
+		fighter.movable = true
+		fighter.current_move = ""
+
+		if fighter.is_on_floor():
+			machine.change_state("Idle")
+		else:
+			machine.change_state("Fall")
+								Hitstun:
+extends State
+
+var timer = 0
+
+func enter():
+	fighter.anim.play("Punched")
+
+func setup(frames):
+	timer = frames
+
+func physics_update(_delta):
+	timer -= 1
+
+	if timer <= 0:
+		if fighter.is_on_floor():
+			machine.change_state("Idle")
+		else:
+			machine.change_state("Fall")
+								Fall:
+extends State
+
+func enter():
+	fighter.anim.play("Fall")
+	fighter.jumpable = false
+func physics_update(_delta):
+	if fighter.state_machine.current_state.name.begins_with("Attack"):
+		return
+	var move = fighter.get_move_from_input()
+
+	if move != "":
+		fighter.current_move_data = fighter.get_move_data_by_name(move)
+		machine.change_state("ATTACK")
+		return
+
+	if fighter.is_on_floor():
+		machine.change_state("Idle")
+		return

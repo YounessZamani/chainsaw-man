@@ -1,10 +1,22 @@
-[gd_scene load_steps=83 format=3 uid="uid://bu30alc0nw373"]
+[gd_scene load_steps=101 format=3 uid="uid://bu30alc0nw373"]
 
 [ext_resource type="Script" path="res://scripts/Fighter.gd" id="1_51a1q"]
 [ext_resource type="Texture2D" uid="uid://b0xebpi0lp8mb" path="res://sprites/TheDummyAnim-SpriteSheet.png" id="2_2sde4"]
 [ext_resource type="Texture2D" uid="uid://dh3fur0yif4a5" path="res://sprites/Harpy Fighter/Harpy Fighter/Sprite Sheets/Sheet235B.png" id="3_r6mar"]
 [ext_resource type="Script" path="res://scripts/input_buffer.gd" id="3_vhkdf"]
 [ext_resource type="Script" path="res://scripts/Controller.gd" id="5_sknr6"]
+[ext_resource type="Script" path="res://scripts/State Machine/StateMachine.gd" id="6_b5sl4"]
+[ext_resource type="Script" path="res://scripts/State Machine/States/IDLE.gd" id="7_qjyei"]
+[ext_resource type="Script" path="res://scripts/State Machine/States/WALK.gd" id="8_s2xs1"]
+[ext_resource type="Script" path="res://scripts/State Machine/States/JUMP.gd" id="9_d5qtr"]
+[ext_resource type="Script" path="res://scripts/State Machine/States/CROUCH_START.gd" id="10_50e5i"]
+[ext_resource type="Script" path="res://scripts/State Machine/States/CROUCH_HOLD.gd" id="11_c0ucw"]
+[ext_resource type="Script" path="res://scripts/State Machine/States/CROUCH_END.gd" id="12_x8kq8"]
+[ext_resource type="Script" path="res://scripts/State Machine/States/ATTACK.gd" id="13_s43os"]
+[ext_resource type="Script" path="res://scripts/State Machine/States/HITSTUN.gd" id="14_3dkv8"]
+[ext_resource type="Script" path="res://scripts/State Machine/States/Attack_Active.gd" id="14_u4rdl"]
+[ext_resource type="Script" path="res://scripts/State Machine/States/Attack_Recovery.gd" id="15_3wyh4"]
+[ext_resource type="Script" path="res://scripts/State Machine/States/FALL.gd" id="15_8mdl5"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1c0fd"]
 atlas = ExtResource("2_2sde4")
@@ -29,6 +41,22 @@ region = Rect2(64, 512, 64, 64)
 [sub_resource type="AtlasTexture" id="AtlasTexture_b0aik"]
 atlas = ExtResource("2_2sde4")
 region = Rect2(128, 512, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3kspq"]
+atlas = ExtResource("2_2sde4")
+region = Rect2(320, 448, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_normc"]
+atlas = ExtResource("2_2sde4")
+region = Rect2(512, 512, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u31ys"]
+atlas = ExtResource("2_2sde4")
+region = Rect2(384, 448, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5e0xw"]
+atlas = ExtResource("2_2sde4")
+region = Rect2(448, 448, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_j5yc6"]
 atlas = ExtResource("2_2sde4")
@@ -338,6 +366,23 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_3kspq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_normc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u31ys")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5e0xw")
+}],
+"loop": false,
+"name": &"Fall",
+"speed": 9.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_j5yc6")
 }, {
 "duration": 1.0,
@@ -587,10 +632,29 @@ animations = [{
 size = Vector2(27, 16)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_lhpck"]
-size = Vector2(24.4, 46.4)
+size = Vector2(23.2, 48.2)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0ieha"]
 size = Vector2(24.4, 31.325)
+
+[sub_resource type="Animation" id="Animation_cq6sj"]
+resource_name = "Punch"
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("sprites")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(),
+"transitions": PackedFloat32Array(),
+"values": []
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_mce73"]
+_data = {
+"Punch": SubResource("Animation_cq6sj")
+}
 
 [node name="fighter" type="CharacterBody2D"]
 position = Vector2(2, -1.19209e-07)
@@ -601,7 +665,7 @@ script = ExtResource("1_51a1q")
 position = Vector2(-1, -12)
 scale = Vector2(1.10938, 1.10938)
 sprite_frames = SubResource("SpriteFrames_8v265")
-animation = &"Punched"
+animation = &"Punch"
 
 [node name="InputBuffer" type="Node" parent="."]
 script = ExtResource("3_vhkdf")
@@ -635,6 +699,48 @@ scale = Vector2(0.338862, 0.549928)
 script = ExtResource("5_sknr6")
 metadata/_edit_use_anchors_ = true
 
+[node name="StateMachine" type="Node" parent="."]
+script = ExtResource("6_b5sl4")
+
+[node name="Idle" type="Node" parent="StateMachine"]
+script = ExtResource("7_qjyei")
+
+[node name="Walk" type="Node" parent="StateMachine"]
+script = ExtResource("8_s2xs1")
+
+[node name="Jump" type="Node" parent="StateMachine"]
+script = ExtResource("9_d5qtr")
+
+[node name="Crouch_Start" type="Node" parent="StateMachine"]
+script = ExtResource("10_50e5i")
+
+[node name="Crouch_Hold" type="Node" parent="StateMachine"]
+script = ExtResource("11_c0ucw")
+
+[node name="Crouch_End" type="Node" parent="StateMachine"]
+script = ExtResource("12_x8kq8")
+
+[node name="Attack_Startup" type="Node" parent="StateMachine"]
+script = ExtResource("13_s43os")
+
+[node name="Attack_Active" type="Node" parent="StateMachine"]
+script = ExtResource("14_u4rdl")
+
+[node name="Attack_Recovery" type="Node" parent="StateMachine"]
+script = ExtResource("15_3wyh4")
+
+[node name="Hitstun" type="Node" parent="StateMachine"]
+script = ExtResource("14_3dkv8")
+
+[node name="Fall" type="Node" parent="StateMachine"]
+script = ExtResource("15_8mdl5")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_mce73")
+}
+
 [connection signal="animation_finished" from="sprites" to="." method="_on_sprites_animation_finished"]
+[connection signal="frame_changed" from="sprites" to="." method="_on_sprites_frame_changed"]
 [connection signal="area_entered" from="hitbox" to="." method="_on_hitbox_area_entered"]
 [connection signal="area_entered" from="hurtbox" to="." method="_on_hurtbox_area_entered"]
