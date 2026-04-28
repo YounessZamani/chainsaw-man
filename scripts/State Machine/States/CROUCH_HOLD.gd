@@ -5,6 +5,7 @@ extends State
 func enter():
 	fighter.anim.play("CrouchHold") # Replace with function body.
 	print("holding crouch")
+	fighter.jumpable = false
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func physics_update(_delta):

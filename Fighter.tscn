@@ -1,4 +1,4 @@
-[gd_scene load_steps=101 format=3 uid="uid://bu30alc0nw373"]
+[gd_scene load_steps=106 format=3 uid="uid://bu30alc0nw373"]
 
 [ext_resource type="Script" path="res://scripts/Fighter.gd" id="1_51a1q"]
 [ext_resource type="Texture2D" uid="uid://b0xebpi0lp8mb" path="res://sprites/TheDummyAnim-SpriteSheet.png" id="2_2sde4"]
@@ -17,6 +17,7 @@
 [ext_resource type="Script" path="res://scripts/State Machine/States/Attack_Active.gd" id="14_u4rdl"]
 [ext_resource type="Script" path="res://scripts/State Machine/States/Attack_Recovery.gd" id="15_3wyh4"]
 [ext_resource type="Script" path="res://scripts/State Machine/States/FALL.gd" id="15_8mdl5"]
+[ext_resource type="Script" path="res://scripts/State Machine/States/Land.gd" id="18_luuuu"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1c0fd"]
 atlas = ExtResource("2_2sde4")
@@ -125,6 +126,26 @@ region = Rect2(512, 512, 64, 64)
 [sub_resource type="AtlasTexture" id="AtlasTexture_n01ej"]
 atlas = ExtResource("2_2sde4")
 region = Rect2(448, 448, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_brij1"]
+atlas = ExtResource("2_2sde4")
+region = Rect2(448, 448, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g2yo7"]
+atlas = ExtResource("2_2sde4")
+region = Rect2(512, 384, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b3uu0"]
+atlas = ExtResource("2_2sde4")
+region = Rect2(128, 512, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lrtie"]
+atlas = ExtResource("2_2sde4")
+region = Rect2(64, 512, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_umwxj"]
+atlas = ExtResource("2_2sde4")
+region = Rect2(0, 512, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_706lp"]
 atlas = ExtResource("2_2sde4")
@@ -257,10 +278,6 @@ region = Rect2(384, 192, 64, 64)
 [sub_resource type="AtlasTexture" id="AtlasTexture_h6ytn"]
 atlas = ExtResource("2_2sde4")
 region = Rect2(448, 192, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_gjpr0"]
-atlas = ExtResource("2_2sde4")
-region = Rect2(0, 384, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_uxy4g"]
 atlas = ExtResource("2_2sde4")
@@ -448,6 +465,26 @@ animations = [{
 "speed": 20.0
 }, {
 "frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_brij1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_g2yo7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_b3uu0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lrtie")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_umwxj")
+}],
+"loop": false,
+"name": &"Landing",
+"speed": 26.0
+}, {
+"frames": [{
 "duration": 2.0,
 "texture": SubResource("AtlasTexture_706lp")
 }, {
@@ -568,9 +605,6 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_gjpr0")
-}, {
-"duration": 1.0,
 "texture": SubResource("AtlasTexture_uxy4g")
 }, {
 "duration": 1.0,
@@ -634,8 +668,9 @@ size = Vector2(27, 16)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_lhpck"]
 size = Vector2(23.2, 48.2)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_0ieha"]
-size = Vector2(24.4, 31.325)
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_8w00t"]
+radius = 13.0857
+height = 47.4116
 
 [sub_resource type="Animation" id="Animation_cq6sj"]
 resource_name = "Punch"
@@ -665,7 +700,9 @@ script = ExtResource("1_51a1q")
 position = Vector2(-1, -12)
 scale = Vector2(1.10938, 1.10938)
 sprite_frames = SubResource("SpriteFrames_8v265")
-animation = &"Punch"
+animation = &"Landing"
+frame = 4
+frame_progress = 1.0
 
 [node name="InputBuffer" type="Node" parent="."]
 script = ExtResource("3_vhkdf")
@@ -686,9 +723,9 @@ collision_layer = 2
 shape = SubResource("RectangleShape2D_lhpck")
 debug_color = Color(0.596078, 0.509804, 0.545098, 0.419608)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(-1, 5.6625)
-shape = SubResource("RectangleShape2D_0ieha")
+[node name="pushbox" type="CollisionShape2D" parent="."]
+position = Vector2(-0.92967, 0)
+shape = SubResource("CapsuleShape2D_8w00t")
 
 [node name="Controller" type="Control" parent="."]
 layout_mode = 3
@@ -735,12 +772,16 @@ script = ExtResource("14_3dkv8")
 [node name="Fall" type="Node" parent="StateMachine"]
 script = ExtResource("15_8mdl5")
 
+[node name="Land" type="Node" parent="StateMachine"]
+script = ExtResource("18_luuuu")
+
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
 "": SubResource("AnimationLibrary_mce73")
 }
 
 [connection signal="animation_finished" from="sprites" to="." method="_on_sprites_animation_finished"]
+[connection signal="animation_finished" from="sprites" to="StateMachine/Land" method="_on_sprites_animation_finished"]
 [connection signal="frame_changed" from="sprites" to="." method="_on_sprites_frame_changed"]
 [connection signal="area_entered" from="hitbox" to="." method="_on_hitbox_area_entered"]
 [connection signal="area_entered" from="hurtbox" to="." method="_on_hurtbox_area_entered"]

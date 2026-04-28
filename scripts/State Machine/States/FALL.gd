@@ -16,5 +16,5 @@ func physics_update(_delta):
 		return
 
 	if fighter.is_on_floor():
-		machine.change_state("Idle")
+		machine.change_state("Land")
 		return

@@ -7,7 +7,7 @@ var jumpable = true
 var hit_active = false
 var look_right = true
 var wants_crouch = false
-
+var crouch_charged = false
 var health = 100
 var opponent = null
 
@@ -15,8 +15,6 @@ const SPEED = 250
 const JUMP_FORCE = -450
 
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
-
-
 
 var current_move = ""
 var current_move_data = {}
@@ -50,7 +48,7 @@ var moves = [
 {
 	"name":"low",
 	"input":["2","H"],
-	"startup":3,
+	"startup":2,
 	"active":2,
 	"recovery":2,
 	"damage":7,
@@ -88,7 +86,6 @@ func _physics_process(delta):
 
 	if !is_on_floor():
 		velocity.y += gravity * delta
-
 	updateside()
 
 	state_machine.physics_update(delta)
@@ -211,7 +208,7 @@ func _on_sprites_frame_changed():
 	var f = anim.frame 
 	var startup = current_move_data["startup"]
 	var active = current_move_data["active"] 
-	var recovery = current_move_data["recovery"]
+	var _recovery = current_move_data["recovery"]
 	 # startup -> active 
 	if f == startup: 
 		state_machine.change_state("Attack_Active") 

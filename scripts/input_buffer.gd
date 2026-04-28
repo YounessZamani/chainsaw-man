@@ -29,7 +29,7 @@ var input_buffer = []
 var time_buffer = []
 
 var last_dir = "5"
-
+var prev_dir = "5"
 # =========================
 # MAIN LOOP
 # =========================
@@ -39,9 +39,12 @@ func _process(_delta):
 		return
 	var dir = get_direction()
 
-	if dir != last_dir :
+	prev_dir = last_dir
+	last_dir = dir
+
+	if dir != prev_dir:
 		add_input(dir)
-		last_dir = dir
+	
 
 	check_buttons()
 	clean_buffer()

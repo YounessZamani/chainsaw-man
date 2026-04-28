@@ -17,6 +17,8 @@ func physics_update(_delta):
 	if !fighter.anim.is_playing():
 		if abs(fighter.velocity.x) > 0:
 			machine.change_state("Walk")
+			fighter.crouch_charged = false
 		else:
 			machine.change_state("Idle")
+			fighter.crouch_charged = false
 		return

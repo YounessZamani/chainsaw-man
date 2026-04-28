@@ -2,6 +2,8 @@ extends State
 
 func enter():
 	fighter.anim.play("Idle")
+	fighter.movable = true
+	fighter.jumpable = true
 	print("idle")
 func physics_update(_delta):
 	if fighter.state_machine.current_state.name.begins_with("Attack"):

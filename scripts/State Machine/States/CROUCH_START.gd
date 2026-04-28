@@ -6,6 +6,7 @@ func enter():
 	fighter.anim.play("CrouchStart")
 	fighter.movable = false# Replace with function body.
 	fighter.jumpable = false
+	fighter.crouch_charged = true
 	print("crouchstarting")
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func physics_update(_delta):
