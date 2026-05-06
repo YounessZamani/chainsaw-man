@@ -1,11 +1,14 @@
 extends State
-
 func enter():
-	fighter.anim.play("Fall")
-	fighter.jumpable = false
-	fighter.velocity.y = 0
-
-func physics_update(_delta):
+	fighter.anim.play("Dash")
+	if fighter.look_right:
+		fighter.position.x += 70
+	else:
+		fighter.position.x -= 70
+	
+func physics_update(delta):
+	
+	
 	if fighter.state_machine.current_state.name.begins_with("Attack"):
 		return
 	var move = fighter.get_move_from_input()
@@ -15,12 +18,6 @@ func physics_update(_delta):
 		fighter.current_move_data = fighter.get_move_data_by_name(move)
 		machine.change_state("Attack_Startup")
 		return
-
-	if fighter.is_on_floor():
-		machine.change_state("Land")
-		fighter.air_dashable = true
-		return
-	if fighter.air_dashable and fighter.dashable:
-		machine.change_state("Air_dash")
-		fighter.air_dashable = false
+	if not fighter.is_on_floor():
+		machine.change_state("Fall") 
 		return

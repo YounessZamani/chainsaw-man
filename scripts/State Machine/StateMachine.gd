@@ -20,7 +20,7 @@ func physics_update(delta):
 func change_state(Name):
 	if current_state:
 		current_state.exit()
-
+	print("state is : ", Name)
 	current_state = get_node(Name)
 	current_state.enter()
 	

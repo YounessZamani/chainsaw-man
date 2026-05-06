@@ -8,7 +8,7 @@ extends Node
 @export var right_action = "p1_right"
 @export var up_action    = "p1_up"
 @export var down_action  = "p1_down"
-
+@export var dash_action = "p1_dash"
 @export var punch_action = "p1_H"
 @export var kick_action  = "p1_L"
 
@@ -34,7 +34,7 @@ var prev_dir = "5"
 # MAIN LOOP
 # =========================
 
-func _process(_delta):
+func _physics_process(_delta):
 	if not enabled:
 		return
 	var dir = get_direction()
@@ -128,18 +128,48 @@ func check_combo(pattern):
 
 	var recent = simplify_buffer()
 
-	if recent.size() < pattern.size():
-		return false
-
-	var last_inputs = recent.slice(recent.size() - pattern.size(), recent.size())
-
-	if last_inputs == pattern:
-		clear_buffer()
-		last_dir = "5"
-		return true
+	var p = 0
+	for i in recent:
+		if i == pattern[p]:
+			p += 1
+			if p >= pattern.size():
+				clear_buffer()
+				last_dir = "5"
+				return true
 
 	return false
 
 func clear_buffer():
 	input_buffer.clear()
 	time_buffer.clear()
+func parse_move():
+
+	# highest priority first
+
+	# Dragon Punch Punch
+	if check_combo(["6","2","3","H"]) \
+	or check_combo(["6","3","H"]):
+		return "dp_h"
+
+	# Fireball Punch
+	if check_combo(["2","3","6","H"]) \
+	or check_combo(["2","6","H"]) \
+	or check_combo(["3","6","H"]):
+		return "qcf_h"
+
+	# Fireball Kick
+	if check_combo(["2","3","6","L"]) \
+	or check_combo(["2","6","L"]):
+		return "qcf_l"
+
+	# normals
+	if check_combo(["H"]):
+		return "normal_h"
+
+	if check_combo(["L"]):
+		return "normal_l"
+
+	return ""
+func has_move():
+
+	return parse_move() != ""

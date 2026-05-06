@@ -1,9 +1,11 @@
 extends State
 
 func enter():
-	fighter.anim.play("Idle")
-	fighter.movable = true
-	fighter.jumpable = true
+	fighter.anim.play("Run")
+	if fighter.look_right:
+		fighter.velocity.x = 1.5*fighter.SPEED
+	else :
+		fighter.velocity.x = -1.5 *fighter.SPEED
 	
 func physics_update(_delta):
 	if fighter.state_machine.current_state.name.begins_with("Attack"):
@@ -24,13 +26,10 @@ func physics_update(_delta):
 		machine.change_state("Crouch_Start")
 		return
 
-	if abs(fighter.velocity.x) > 0:
+	if abs(fighter.velocity.x) > 0 and !fighter.dashable:
+		fighter.dashable = false
 		machine.change_state("Walk")
 		return
-	if fighter.dashable:
-		if fighter.back_dashable:
-			machine.change_state("Back_dash")
-		else:
-			machine.change_state("Dash")
-			return
-	
+	if fighter.velocity.x == 0 and !fighter.dashable:
+		machine.change_state("Idle")
+		return

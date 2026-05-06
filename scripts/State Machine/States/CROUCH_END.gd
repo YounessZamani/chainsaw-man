@@ -6,7 +6,7 @@ func enter():
 	fighter.anim.play("CrouchEnd")
 	fighter.jumpable= true
 	fighter.movable = true
-	print("crouch over")
+	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func physics_update(_delta):

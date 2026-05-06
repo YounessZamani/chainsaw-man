@@ -1,7 +1,7 @@
 extends CharacterBody2D
 
 
-
+var blocking = false
 var movable = true
 var jumpable = true
 var hit_active = false
@@ -10,7 +10,9 @@ var wants_crouch = false
 var crouch_charged = false
 var health = 100
 var opponent = null
-
+var dashable = false
+var back_dashable = false
+var air_dashable = false
 const SPEED = 250
 const JUMP_FORCE = -450
 
@@ -22,6 +24,7 @@ var move_timer = 0
 var hit_targets = []
 
 var hitstun_time = 0
+var blockstun_time = 0
 
 
 
@@ -30,6 +33,7 @@ var hitstun_time = 0
 @onready var controller = $Controller
 @onready var state_machine = $StateMachine
 @onready var hitbox = $hitbox
+@onready var hurtbox = $hurtbox
 
 
 var moves = [
@@ -126,13 +130,22 @@ func get_current_move_data():
 
 func take_hit(damage, push, stun):
 
-	health -= damage
-	if !look_right:
-		velocity.x = push
-	else: velocity.x = -push
-	hitstun_time = stun
+	if !blocking:
+		health -= damage
+		if !look_right:
+			velocity.x = push
+		else: velocity.x = -push
+		hitstun_time = stun
 
-	state_machine.change_state("Hitstun")
+		state_machine.change_state("Hitstun")
+	else:
+		health -= damage/100
+		if !look_right:
+			velocity.x = push/20
+		else: velocity.x = -push/20
+		blockstun_time = stun/2
+
+		state_machine.change_state("Block")
 
 # =========================
 # HIT DETECTION
@@ -226,3 +239,4 @@ func _on_sprites_animation_finished():
 		current_move = ""
 		current_move_data = {}
 		state_machine.change_state("Idle")# Replace with function body.
+

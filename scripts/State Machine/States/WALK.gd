@@ -2,7 +2,7 @@ extends State
 
 func enter():
 	fighter.anim.play("Walk")
-	print("walking")
+	
 func physics_update(_delta):
 	if fighter.state_machine.current_state.name.begins_with("Attack"):
 		return
@@ -25,3 +25,9 @@ func physics_update(_delta):
 	if fighter.velocity.x == 0:
 		machine.change_state("Idle")
 		return
+	if fighter.dashable:
+		if fighter.back_dashable:
+			machine.change_state("Back_dash")
+		else:
+			machine.change_state("Dash")
+			return

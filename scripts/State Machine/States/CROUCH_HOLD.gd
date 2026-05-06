@@ -4,7 +4,7 @@ extends State
 # Called when the node enters the scene tree for the first time.
 func enter():
 	fighter.anim.play("CrouchHold") # Replace with function body.
-	print("holding crouch")
+	
 	fighter.jumpable = false
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

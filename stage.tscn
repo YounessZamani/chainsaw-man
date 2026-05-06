@@ -45,6 +45,7 @@ left_action = "p2_left"
 right_action = "p2_right"
 up_action = "p2_up"
 down_action = "p2_down"
+dash_action = "p2_dash"
 punch_action = "p2_H"
 kick_action = "p2_L"
 

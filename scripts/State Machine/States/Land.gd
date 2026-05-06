@@ -5,7 +5,7 @@ extends State
 func enter():
 	fighter.anim.play("Landing") # Replace with function body.
 	fighter.movable = false
-	print("landing")
+	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 
@@ -13,4 +13,5 @@ func enter():
 
 func _on_sprites_animation_finished():
 	if fighter.anim.animation == "Landing" :
+		fighter.jumpable = true
 		machine.change_state("Idle")# Replace with function body.
