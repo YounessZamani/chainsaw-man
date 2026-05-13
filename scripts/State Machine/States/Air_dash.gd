@@ -1,23 +1,33 @@
 extends State
-func enter():
-	fighter.anim.play("Dash")
-	if fighter.look_right:
-		fighter.position.x += 70
-	else:
-		fighter.position.x -= 70
-	
-func physics_update(delta):
-	
-	
-	if fighter.state_machine.current_state.name.begins_with("Attack"):
-		return
-	var move = fighter.get_move_from_input()
 
-	if move != "":
-		fighter.current_move = move
-		fighter.current_move_data = fighter.get_move_data_by_name(move)
-		machine.change_state("Attack_Startup")
+var timer = 0.18
+var dash_speed = 400
+var dir = 1
+
+func enter():
+
+	timer = 0.4
+
+	fighter.movement_lock = true
+
+	fighter.anim.play("Dash")
+
+	if fighter.look_right:
+		dir = 1
+	else:
+		dir = -1
+	fighter.velocity.y = 0
+func physics_update(delta):
+
+	timer -= delta
+
+	fighter.velocity.x = dash_speed * dir
+	fighter.velocity.y = 0
+
+	if try_attack():
 		return
-	if not fighter.is_on_floor():
-		machine.change_state("Fall") 
-		return
+
+	if timer <= 0:
+		machine.change_state("Fall")
+func exit():
+	fighter.movement_lock = false

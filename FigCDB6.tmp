@@ -1032,7 +1032,6 @@ tracks/1/keys = {
 [sub_resource type="Animation" id="Animation_nsoyw"]
 resource_name = "Idle"
 length = 0.35
-loop_mode = 1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -1505,7 +1504,7 @@ script = ExtResource("1_51a1q")
 position = Vector2(0.92967, -7.83154)
 scale = Vector2(0.770811, 0.770811)
 sprite_frames = SubResource("SpriteFrames_8v265")
-animation = &"Idle"
+animation = &"Run"
 flip_h = true
 
 [node name="InputBuffer" type="Node" parent="."]
@@ -1595,7 +1594,6 @@ script = ExtResource("22_kyjj2")
 script = ExtResource("23_h8acl")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-callback_mode_process = 0
 libraries = {
 "": SubResource("AnimationLibrary_s4qhl")
 }

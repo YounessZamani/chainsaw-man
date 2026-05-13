@@ -1,35 +1,35 @@
 extends State
-
+var timer = 3.0
+var dir = 1
+var run_speed = 400
 func enter():
+	timer = 1.0
 	fighter.anim.play("Run")
 	if fighter.look_right:
-		fighter.velocity.x = 1.5*fighter.SPEED
-	else :
-		fighter.velocity.x = -1.5 *fighter.SPEED
-	
-func physics_update(_delta):
-	if fighter.state_machine.current_state.name.begins_with("Attack"):
-		return
-	var move = fighter.get_move_from_input()
+		dir = 1
+	else:
+		dir = -1
+func exit():
+	fighter.movement_lock = false	
+func physics_update(delta):
+	timer -= delta
+	fighter.velocity.x = run_speed * dir
+	if timer<=0 or not fighter.runnable:
+		if try_attack():
+			return
 
-	if move != "":
-		fighter.current_move = move
-		fighter.current_move_data = fighter.get_move_data_by_name(move)
-		machine.change_state("Attack_Startup")
-		return
+		if !fighter.is_on_floor() :
+			machine.change_state("Jump")
+			return
 
-	if !fighter.is_on_floor() :
-		machine.change_state("Jump")
-		return
+		if fighter.wants_crouch:
+			machine.change_state("Crouch_Start")
+			return
 
-	if fighter.wants_crouch:
-		machine.change_state("Crouch_Start")
-		return
-
-	if abs(fighter.velocity.x) > 0 and !fighter.dashable:
-		fighter.dashable = false
-		machine.change_state("Walk")
-		return
-	if fighter.velocity.x == 0 and !fighter.dashable:
-		machine.change_state("Idle")
-		return
+		if abs(fighter.velocity.x) > 0 and !fighter.dashable:
+			fighter.dashable = false
+			machine.change_state("Walk")
+			return
+		if fighter.velocity.x == 0 and !fighter.dashable:
+			machine.change_state("Idle")
+			return

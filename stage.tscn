@@ -1,7 +1,11 @@
-[gd_scene load_steps=5 format=3 uid="uid://cijk6msgax5px"]
+[gd_scene load_steps=9 format=3 uid="uid://cijk6msgax5px"]
 
 [ext_resource type="Texture2D" uid="uid://8tq3am6ynxpy" path="res://bg.jpg" id="1_naslf"]
 [ext_resource type="PackedScene" uid="uid://bu30alc0nw373" path="res://Fighter.tscn" id="2_dqjcw"]
+[ext_resource type="Script" path="res://scripts/Health_Bar.gd" id="3_ghhrj"]
+[ext_resource type="Script" path="res://scripts/Match Manager.gd" id="3_j88f5"]
+[ext_resource type="Script" path="res://scripts/InputHistory.gd" id="5_ie6hc"]
+[ext_resource type="Script" path="res://scripts/MoveData.gd" id="6_l4l0f"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_l7h3e"]
 size = Vector2(1144.5, 20)
@@ -19,7 +23,7 @@ texture = ExtResource("1_naslf")
 metadata/_edit_lock_ = true
 
 [node name="player" parent="." groups=["Fighters"] instance=ExtResource("2_dqjcw")]
-position = Vector2(741, 427)
+position = Vector2(318, 443)
 scale = Vector2(5.261, 4)
 metadata/_edit_group_ = true
 
@@ -33,7 +37,7 @@ position = Vector2(537, 563)
 shape = SubResource("RectangleShape2D_l7h3e")
 
 [node name="fighter" parent="." groups=["Fighters"] instance=ExtResource("2_dqjcw")]
-position = Vector2(247, 414)
+position = Vector2(849, 411)
 scale = Vector2(4, 4)
 
 [node name="sprites" parent="fighter" index="0"]
@@ -52,12 +56,156 @@ kick_action = "p2_L"
 [node name="CollisionShape2D" parent="fighter/hurtbox" index="0"]
 position = Vector2(0.599998, -0.900002)
 
-[node name="StaticBody2D" type="StaticBody2D" parent="."]
+[node name="left wall" type="StaticBody2D" parent="."]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="left wall"]
 position = Vector2(2.5, 267.5)
 shape = SubResource("RectangleShape2D_cj764")
 metadata/_edit_lock_ = true
+
+[node name="Match Manager" type="Node" parent="."]
+script = ExtResource("3_j88f5")
+
+[node name="Ui layers" type="Node2D" parent="."]
+
+[node name="WIN text" type="Label" parent="Ui layers"]
+modulate = Color(1, 0, 0.439216, 1)
+offset_left = 461.0
+offset_top = 245.0
+offset_right = 611.0
+offset_bottom = 268.0
+horizontal_alignment = 1
+uppercase = true
+
+[node name="InputHistory" type="RichTextLabel" parent="Ui layers"]
+offset_left = 4.0
+offset_top = 71.0
+offset_right = 58.0
+offset_bottom = 121.0
+script = ExtResource("5_ie6hc")
+
+[node name="restart button" type="Button" parent="Ui layers"]
+custom_minimum_size = Vector2(222, 0)
+offset_left = 388.0
+offset_top = 78.0
+offset_right = 672.0
+offset_bottom = 196.0
+text = "reset?"
+
+[node name="Player1" type="Node2D" parent="Ui layers"]
+
+[node name="P1 health bar" type="ProgressBar" parent="Ui layers/Player1" node_paths=PackedStringArray("fighter")]
+offset_left = 543.0
+offset_top = 5.0
+offset_right = 1043.0
+offset_bottom = 32.0
+show_percentage = false
+script = ExtResource("3_ghhrj")
+fighter = NodePath("../../../fighter")
+
+[node name="Move Data p1" type="GridContainer" parent="Ui layers/Player1" node_paths=PackedStringArray("fighter")]
+offset_left = 814.0
+offset_top = 87.0
+offset_right = 976.0
+offset_bottom = 218.0
+scale = Vector2(1.13838, 1.15499)
+columns = 2
+script = ExtResource("6_l4l0f")
+fighter = NodePath("../../../fighter")
+
+[node name="Damage" type="Label" parent="Ui layers/Player1/Move Data p1"]
+layout_mode = 2
+text = "Damage"
+
+[node name="Damage value" type="Label" parent="Ui layers/Player1/Move Data p1"]
+layout_mode = 2
+
+[node name="Combo Damage" type="Label" parent="Ui layers/Player1/Move Data p1"]
+layout_mode = 2
+text = "Combo damage"
+
+[node name="Combo damage value" type="Label" parent="Ui layers/Player1/Move Data p1"]
+layout_mode = 2
+
+[node name="Max combo damage" type="Label" parent="Ui layers/Player1/Move Data p1"]
+layout_mode = 2
+text = "max combo damage"
+
+[node name="Max combo damage value" type="Label" parent="Ui layers/Player1/Move Data p1"]
+layout_mode = 2
+
+[node name="Attack Startup" type="Label" parent="Ui layers/Player1/Move Data p1"]
+layout_mode = 2
+text = "Attack Startup"
+
+[node name="Attack Startup value" type="Label" parent="Ui layers/Player1/Move Data p1"]
+layout_mode = 2
+
+[node name="Frame advantage" type="Label" parent="Ui layers/Player1/Move Data p1"]
+layout_mode = 2
+text = "Frame Advantage"
+
+[node name="Frame advantage value" type="Label" parent="Ui layers/Player1/Move Data p1"]
+layout_mode = 2
+
+[node name="Player2" type="Node2D" parent="Ui layers"]
+
+[node name="P2 Health bar" type="ProgressBar" parent="Ui layers/Player2" node_paths=PackedStringArray("fighter")]
+offset_left = 49.0
+offset_top = 3.0
+offset_right = 444.0
+offset_bottom = 30.0
+fill_mode = 1
+show_percentage = false
+script = ExtResource("3_ghhrj")
+fighter = NodePath("../../../player")
+
+[node name="Move Data p2" type="GridContainer" parent="Ui layers/Player2" node_paths=PackedStringArray("fighter")]
+offset_left = 80.0
+offset_top = 135.0
+offset_right = 242.0
+offset_bottom = 266.0
+scale = Vector2(0.96752, 1.19222)
+columns = 2
+script = ExtResource("6_l4l0f")
+fighter = NodePath("../../../player")
+
+[node name="Damage" type="Label" parent="Ui layers/Player2/Move Data p2"]
+layout_mode = 2
+text = "Damage"
+
+[node name="Damage value" type="Label" parent="Ui layers/Player2/Move Data p2"]
+layout_mode = 2
+
+[node name="Combo Damage" type="Label" parent="Ui layers/Player2/Move Data p2"]
+layout_mode = 2
+text = "Combo damage"
+
+[node name="Combo damage value" type="Label" parent="Ui layers/Player2/Move Data p2"]
+layout_mode = 2
+
+[node name="Max combo damage" type="Label" parent="Ui layers/Player2/Move Data p2"]
+layout_mode = 2
+text = "max combo damage"
+
+[node name="Max combo damage value" type="Label" parent="Ui layers/Player2/Move Data p2"]
+layout_mode = 2
+
+[node name="Attack Startup" type="Label" parent="Ui layers/Player2/Move Data p2"]
+layout_mode = 2
+text = "Attack Startup"
+
+[node name="Attack Startup value" type="Label" parent="Ui layers/Player2/Move Data p2"]
+layout_mode = 2
+
+[node name="Frame advantage" type="Label" parent="Ui layers/Player2/Move Data p2"]
+layout_mode = 2
+text = "Frame Advantage"
+
+[node name="Frame advantage value" type="Label" parent="Ui layers/Player2/Move Data p2"]
+layout_mode = 2
+
+[connection signal="pressed" from="Ui layers/restart button" to="Match Manager" method="_on_restart_button_pressed"]
 
 [editable path="player"]
 [editable path="fighter"]

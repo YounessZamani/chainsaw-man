@@ -3,7 +3,7 @@ extends State
 var timer = 0.0
 
 func enter():
-	fighter.anim.play("block")
+	fighter.anim.play("Block")
 	timer = fighter.blockstun_time / 60.0
 	fighter.movable = false
 	

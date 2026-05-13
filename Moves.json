@@ -1,0 +1,41 @@
+[
+{
+	"name":"test",
+	"input":["2","3","6","H"],
+	"startup":3,
+	"active":4,
+	"recovery":3,
+	"damage":55,
+	"push":150,
+	"stun":30,
+	"ground_ok":true,
+	"air_ok":false,
+	"freeze": 12
+},
+{
+	"name":"low",
+	"input":["2","H"],
+	"startup":2,
+	"active":2,
+	"recovery":2,
+	"damage":7,
+	"push":120,
+	"stun":24,
+	"ground_ok":true,
+	"air_ok":false,
+	"freeze": 6
+},{
+	"name":"Punch",
+	"input":["H"],
+	"startup":3,
+	"active":2,
+	"recovery":2,
+	"damage":5,
+	"push":100,
+	"stun":20,
+	"ground_ok":true,
+	"air_ok":true,
+	"freeze": 6
+}
+
+]

@@ -11,17 +11,13 @@ func enter():
 func physics_update(_delta):
 	fighter.velocity.x = 0
 
-	var move = fighter.get_move_from_input()
-	if move != "":
-		fighter.current_move = move
-		fighter.current_move_data = fighter.get_move_data_by_name(move)
-		machine.change_state("Attack_Startup")
+	if try_attack():
 		return
-
 	if !fighter.is_on_floor():
 		machine.change_state("Jump")
 		return
 
 	if !fighter.wants_crouch:
+		fighter.jumpable = true
 		machine.change_state("Crouch_End")
 		return

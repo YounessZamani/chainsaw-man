@@ -11,7 +11,5 @@ func enter():
 
 
 
-func _on_sprites_animation_finished():
-	if fighter.anim.animation == "Landing" :
-		fighter.jumpable = true
-		machine.change_state("Idle")# Replace with function body.
+func Landing():
+	machine.change_state("Idle")

@@ -1,6 +1,8 @@
 extends CharacterBody2D
+class_name Fighter
 
-
+var combo_hits = 0
+var runnable = false
 var blocking = false
 var movable = true
 var jumpable = true
@@ -15,6 +17,7 @@ var back_dashable = false
 var air_dashable = false
 const SPEED = 250
 const JUMP_FORCE = -450
+var movement_lock = false
 
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 
@@ -25,69 +28,43 @@ var hit_targets = []
 
 var hitstun_time = 0
 var blockstun_time = 0
+var moves =[]
+var hitstop_time = 0
 
 
 
 @onready var buffer = $InputBuffer
-@onready var anim = $sprites
+@onready var Sprites = $sprites
 @onready var controller = $Controller
 @onready var state_machine = $StateMachine
 @onready var hitbox = $hitbox
 @onready var hurtbox = $hurtbox
+@onready var anim = $AnimationPlayer
 
-
-var moves = [
-{
-	"name":"test",
-	"input":["2","3","6","H"],
-	"startup":3,
-	"active":4,
-	"recovery":3,
-	"damage":10,
-	"push":150,
-	"stun":30,
-	"ground_ok":true,
-	"air_ok":false
-},
-{
-	"name":"low",
-	"input":["2","H"],
-	"startup":2,
-	"active":2,
-	"recovery":2,
-	"damage":7,
-	"push":120,
-	"stun":24,
-	"ground_ok":true,
-	"air_ok":false
-},{
-	"name":"Punch",
-	"input":["H"],
-	"startup":3,
-	"active":2,
-	"recovery":2,
-	"damage":5,
-	"push":100,
-	"stun":20,
-	"ground_ok":true,
-	"air_ok":true
-}
-
-]
 
 
 
 func _ready():
+	load_moves()
 	buffer.body = self
 	find_opponent()
 	state_machine.start(self)
 
 
 func _physics_process(delta):
+	if hitstop_time > 0:
 
+		anim.speed_scale = 0
+
+		hitstop_time -= delta
+
+		if hitstop_time <= 0:
+			anim.speed_scale = 1
+
+		return
 	if controller:
 		controller.control(self)
-
+	
 	if !is_on_floor():
 		velocity.y += gravity * delta
 	updateside()
@@ -128,8 +105,9 @@ func get_current_move_data():
 	return null
 
 
-func take_hit(damage, push, stun):
-
+func take_hit(damage, push, stun,freeze):
+	apply_hitstop(freeze)
+	combo_hits +=1
 	if !blocking:
 		health -= damage
 		if !look_right:
@@ -144,6 +122,7 @@ func take_hit(damage, push, stun):
 			velocity.x = push/20
 		else: velocity.x = -push/20
 		blockstun_time = stun/2
+	
 
 		state_machine.change_state("Block")
 
@@ -168,17 +147,19 @@ func check_hits():
 			hit_targets.append(enemy)
 
 			var move = current_move_data
-
+			apply_hitstop(move["freeze"])
 			enemy.take_hit(
 				move["damage"],
 				move["push"],
-				move["stun"]
+				move["stun"],
+				move["freeze"]
 			)
 
 
 
 func updateside():
-
+	if not is_on_floor():
+		return
 	if opponent == null:
 		return
 
@@ -191,10 +172,10 @@ func update_hitbox_position():
 
 	if look_right:
 		hitbox.scale.x = 1
-		anim.flip_h = false
+		Sprites.flip_h = false
 	else:
 		hitbox.scale.x = -1
-		anim.flip_h = true
+		Sprites.flip_h = true
 
 func is_in_state(state_name):
 	return state_machine.current_state.name == state_name
@@ -214,29 +195,27 @@ func get_move_data_by_name(Name):
 func frames(n):
 	return n / 60.0
 
+func load_moves():
 
-func _on_sprites_frame_changed():
+	var file = FileAccess.open("res://Moves.json", FileAccess.READ)
 
-	if current_move_data.is_empty(): return
-	var f = anim.frame 
-	var startup = current_move_data["startup"]
-	var active = current_move_data["active"] 
-	var _recovery = current_move_data["recovery"]
-	 # startup -> active 
-	if f == startup: 
-		state_machine.change_state("Attack_Active") 
-		hit_active = true
-	 # active -> recovery 
-	elif f == startup + active: 
-		state_machine.change_state("Attack_Recovery") 
-		hit_active = false
-	
+	if file == null:
+		push_error("Failed to load moves.json")
+		return
 
-func _on_sprites_animation_finished():
-	if state_machine.current_state.name.begins_with("Attack"):
-		hit_active = false
-		movable = true
-		current_move = ""
-		current_move_data = {}
-		state_machine.change_state("Idle")# Replace with function body.
+	var text = file.get_as_text()
+
+	var json = JSON.new()
+
+	var result = json.parse(text)
+
+	if result != OK:
+		push_error("JSON parse failed")
+		return
+
+	moves = json.data
+
+func apply_hitstop(freeze):
+	hitstop_time = freeze/60
+
 

@@ -9,3 +9,6 @@ func enter():
 func physics_update(_delta):
 
 	pass
+func recover():
+	machine.change_state("Attack_Recovery")
+
