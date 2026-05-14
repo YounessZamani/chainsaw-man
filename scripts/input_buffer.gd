@@ -27,7 +27,8 @@ var body
 
 var input_buffer = []
 var time_buffer = []
-
+var input_history = []
+var history_limit = 25
 var last_dir = "5"
 var prev_dir = "5"
 # =========================
@@ -44,6 +45,7 @@ func _physics_process(_delta):
 
 	if dir != prev_dir:
 		add_input(dir)
+		add_history(dir)
 	
 
 	check_buttons()
@@ -91,9 +93,11 @@ func check_buttons():
 	if Input.is_action_just_pressed(punch_action):
 		add_input(get_direction())
 		add_input("H")
+		add_button_to_last_input("H")
 
 	if Input.is_action_just_pressed(kick_action):
 		add_input("L")
+		add_button_to_last_input("L")
 
 # =========================
 # BUFFER LOGIC
@@ -173,3 +177,19 @@ func parse_move():
 func has_move():
 
 	return parse_move() != ""
+func add_history(dir, btn = ""):
+
+	input_history.append({
+		"dir": dir,
+		"button": btn
+	})
+
+	if input_history.size() > history_limit:
+		input_history.pop_front()
+func add_button_to_last_input(btn):
+
+	if input_history.is_empty():
+		add_history("5", btn)
+		return
+
+	input_history[-1]["button"] = btn

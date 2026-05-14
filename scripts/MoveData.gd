@@ -15,7 +15,7 @@ var dmg := 0
 var combo := 0
 var max_combo := 0
 var startup := 0
-var advantage := 0
+var advantage := 0.0
 var last_combo_hits =0
 var last_health := 100
 
@@ -108,11 +108,11 @@ func update_advantage():
 
 	if opp.is_in_state("Hitstun"):
 
-		advantage = opp.hitstun_time/60 - recovery
+		advantage = opp.hitstun_time/60.00 - recovery
 
 	elif opp.is_in_state("Block"):
 
-		advantage = opp.blockstun_time/60 - recovery
+		advantage = opp.blockstun_time/60.00 - recovery
 
 	else:
 

@@ -64,6 +64,15 @@ offset_bottom = 268.0
 horizontal_alignment = 1
 uppercase = true
 
+[node name="InputHistory" type="RichTextLabel" parent="Ui layers" node_paths=PackedStringArray("fighter")]
+offset_left = 50.0
+offset_top = 53.0
+offset_right = 104.0
+offset_bottom = 532.0
+tab_size = 8
+script = ExtResource("5_ie6hc")
+fighter = NodePath("../../player")
+
 [node name="restart button" type="Button" parent="Ui layers"]
 custom_minimum_size = Vector2(222, 0)
 offset_left = 388.0
@@ -84,10 +93,10 @@ script = ExtResource("3_ghhrj")
 fighter = NodePath("../../../fighter")
 
 [node name="Move Data p1" type="GridContainer" parent="Ui layers/Player1" node_paths=PackedStringArray("fighter")]
-offset_left = 727.0
-offset_top = 63.0
-offset_right = 889.0
-offset_bottom = 194.0
+offset_left = 814.0
+offset_top = 87.0
+offset_right = 976.0
+offset_bottom = 218.0
 scale = Vector2(1.13838, 1.15499)
 columns = 2
 script = ExtResource("6_l4l0f")
@@ -127,16 +136,6 @@ text = "Frame Advantage"
 
 [node name="Frame advantage value" type="Label" parent="Ui layers/Player1/Move Data p1"]
 layout_mode = 2
-
-[node name="InputHistory" type="RichTextLabel" parent="Ui layers/Player1" node_paths=PackedStringArray("fighter")]
-offset_left = 50.0
-offset_top = 53.0
-offset_right = 104.0
-offset_bottom = 532.0
-scroll_active = false
-tab_size = 8
-script = ExtResource("5_ie6hc")
-fighter = NodePath("../../../player")
 
 [node name="Player2" type="Node2D" parent="Ui layers"]
 
@@ -194,17 +193,6 @@ text = "Frame Advantage"
 
 [node name="Frame advantage value" type="Label" parent="Ui layers/Player2/Move Data p2"]
 layout_mode = 2
-
-[node name="InputHistory" type="RichTextLabel" parent="Ui layers/Player2" node_paths=PackedStringArray("fighter")]
-offset_left = 1011.0
-offset_top = 58.0
-offset_right = 1065.0
-offset_bottom = 537.0
-fit_content = true
-scroll_active = false
-tab_size = 8
-script = ExtResource("5_ie6hc")
-fighter = NodePath("../../../fighter")
 
 [node name="walls and floor" type="Node2D" parent="."]
 position = Vector2(4, 71)
