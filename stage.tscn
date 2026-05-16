@@ -25,6 +25,7 @@ metadata/_edit_lock_ = true
 [node name="player" parent="." groups=["Fighters"] instance=ExtResource("2_dqjcw")]
 position = Vector2(318, 443)
 scale = Vector2(5.261, 4)
+collision_mask = 2
 metadata/_edit_group_ = true
 
 [node name="CollisionShape2D" parent="player/hurtbox" index="0"]
@@ -33,6 +34,7 @@ position = Vector2(0, -2.55)
 [node name="fighter" parent="." groups=["Fighters"] instance=ExtResource("2_dqjcw")]
 position = Vector2(849, 411)
 scale = Vector2(4, 4)
+collision_mask = 2
 
 [node name="sprites" parent="fighter" index="0"]
 position = Vector2(2.15007, -6.74992)
@@ -206,29 +208,22 @@ tab_size = 8
 script = ExtResource("5_ie6hc")
 fighter = NodePath("../../../fighter")
 
-[node name="walls and floor" type="Node2D" parent="."]
+[node name="walls and floor" type="StaticBody2D" parent="."]
 position = Vector2(4, 71)
+collision_layer = 2
+collision_mask = 3
 
-[node name="floor" type="StaticBody2D" parent="walls and floor"]
-position = Vector2(-4, -71)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="walls and floor/floor"]
-position = Vector2(537, 563)
+[node name="floor" type="CollisionShape2D" parent="walls and floor"]
+position = Vector2(533, 492)
 shape = SubResource("RectangleShape2D_l7h3e")
 
-[node name="left wall" type="StaticBody2D" parent="walls and floor"]
-position = Vector2(-4, -71)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="walls and floor/left wall"]
-position = Vector2(2.5, 267.5)
+[node name="left wall" type="CollisionShape2D" parent="walls and floor"]
+position = Vector2(-1.5, 196.5)
 shape = SubResource("RectangleShape2D_cj764")
 metadata/_edit_lock_ = true
 
-[node name="left wall2" type="StaticBody2D" parent="walls and floor"]
-position = Vector2(-4, -71)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="walls and floor/left wall2"]
-position = Vector2(1108, 257)
+[node name="right wall" type="CollisionShape2D" parent="walls and floor"]
+position = Vector2(1104, 186)
 shape = SubResource("RectangleShape2D_cj764")
 
 [connection signal="pressed" from="Ui layers/restart button" to="Match Manager" method="_on_restart_button_pressed"]

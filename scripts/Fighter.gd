@@ -74,7 +74,7 @@ func _physics_process(delta):
 	check_hits()
 
 	move_and_slide()
-
+	resolve_pushbox()
 	update_hitbox_position()
 
 func set_crouch(value):
@@ -217,5 +217,26 @@ func load_moves():
 
 func apply_hitstop(freeze):
 	hitstop_time = freeze/60
+func resolve_pushbox():
 
+	if opponent == null:
+		return
 
+	# only push when both grounded
+	if not is_on_floor() or not opponent.is_on_floor():
+		return
+
+	var min_distance = 80
+
+	var dist = opponent.global_position.x - global_position.x
+
+	if abs(dist) < min_distance:
+
+		var push = (min_distance - abs(dist)) / 2.0
+
+		if dist > 0:
+			global_position.x -= push
+			opponent.global_position.x += push
+		else:
+			global_position.x += push
+			opponent.global_position.x -= push

@@ -1427,7 +1427,7 @@ tracks/3/path = NodePath("sprites:scale")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(0, 0.93285, 0.933857),
+"times": PackedFloat32Array(0, 0.93285, 0.9359),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
 "values": [Vector2(0.05, 0.05), Vector2(0.05, 0.05), Vector2(1, 1)]
@@ -1499,20 +1499,21 @@ _data = {
 [node name="fighter" type="CharacterBody2D"]
 position = Vector2(2, -1.19209e-07)
 scale = Vector2(1.07565, 1.02151)
+collision_mask = 2
 script = ExtResource("1_51a1q")
 
 [node name="sprites" type="AnimatedSprite2D" parent="."]
-position = Vector2(0.92967, -7.83154)
-scale = Vector2(0.770811, 0.770811)
+position = Vector2(-2.78901, -9.78943)
 sprite_frames = SubResource("SpriteFrames_8v265")
-animation = &"Idle"
-flip_h = true
+animation = &"Fall"
+frame = 3
 
 [node name="InputBuffer" type="Node" parent="."]
 script = ExtResource("3_vhkdf")
 
 [node name="hitbox" type="Area2D" parent="."]
-collision_mask = 2
+collision_layer = 4
+collision_mask = 8
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="hitbox"]
 modulate = Color(1, 0.0235294, 0, 1)
@@ -1521,7 +1522,8 @@ shape = SubResource("RectangleShape2D_sy0bb")
 metadata/_edit_group_ = true
 
 [node name="hurtbox" type="Area2D" parent="." groups=["Hurtbox"]]
-collision_layer = 2
+collision_layer = 8
+collision_mask = 4
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="hurtbox"]
 shape = SubResource("RectangleShape2D_lhpck")
