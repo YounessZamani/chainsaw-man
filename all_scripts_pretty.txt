@@ -1,5 +1,5 @@
 GODOT PROJECT SCRIPT EXPORT
-Generated: 2026-05-15T02:19:39
+Generated: 2026-05-18T16:07:52
 Total scripts: 29
 
 ==== FILE INDEX ====
@@ -191,7 +191,7 @@ func control(body):
 
 ========================================
 FILE: /scripts/Fighter.gd
-LINES: 219
+LINES: 246
 ========================================
 
 extends CharacterBody2D
@@ -241,7 +241,10 @@ var hitstop_time = 0
 
 
 func _ready():
+	
 	load_moves()
+	for move in moves:
+		print(move["name"],get_anim_frames(move["name"]))
 	buffer.body = self
 	find_opponent()
 	state_machine.start(self)
@@ -270,7 +273,7 @@ func _physics_process(delta):
 	check_hits()
 
 	move_and_slide()
-
+	resolve_pushbox()
 	update_hitbox_position()
 
 func set_crouch(value):
@@ -354,7 +357,7 @@ func check_hits():
 
 
 func updateside():
-	if not is_on_floor():
+	if not is_on_floor() and state_machine.current_state.name != "Fall":
 		return
 	if opponent == null:
 		return
@@ -413,6 +416,30 @@ func load_moves():
 
 func apply_hitstop(freeze):
 	hitstop_time = freeze/60
+func resolve_pushbox():
+
+	if opponent == null:
+		return
+
+	# only push when both grounded
+	if abs(opponent.global_position.y - global_position.y) <=80:
+		var min_distance = 80
+
+		var dist = opponent.global_position.x - global_position.x
+
+		if abs(dist) < min_distance:
+
+			var push = (min_distance - abs(dist)) / 2.0
+
+			if dist > 0:
+				global_position.x -= push
+				opponent.global_position.x += push
+			else:
+				global_position.x += push
+				opponent.global_position.x -= push
+func get_anim_frames(anim_name):
+	var animframes = $AnimationPlayer.get_animation(anim_name)
+	return round(animframes.length * 60)
 
 
 
@@ -550,7 +577,7 @@ func hide_butt():
 
 ========================================
 FILE: /scripts/MoveData.gd
-LINES: 119
+LINES: 118
 ========================================
 
 extends GridContainer
@@ -570,7 +597,7 @@ var dmg := 0
 var combo := 0
 var max_combo := 0
 var startup := 0
-var advantage := 0
+var advantage := 0.00
 var last_combo_hits =0
 var last_health := 100
 
@@ -649,7 +676,7 @@ func update_startup():
 
 func update_advantage():
 
-	if fighter.current_move_data == null:
+	if fighter.current_move_data.is_empty():
 		return
 
 	var move_data = fighter.current_move_data
@@ -657,17 +684,16 @@ func update_advantage():
 	if !move_data.has("recovery"):
 		return
 
-	var recovery = move_data["recovery"]
-
+	var recovery = move_data["recovery"]- move_data["active"]
 	# assuming hitstun_time/blockstun_time are stored in FRAMES
 
 	if opp.is_in_state("Hitstun"):
 
-		advantage = opp.hitstun_time/60- recovery
+		advantage = round(opp.hitstun_time/60.00- recovery)
 
 	elif opp.is_in_state("Block"):
 
-		advantage = opp.blockstun_time/60 - recovery
+		advantage = round(opp.blockstun_time/60.00 - recovery)
 
 	else:
 
@@ -783,46 +809,47 @@ func exit():
 
 ========================================
 FILE: /scripts/State Machine/States/Attack_Active.gd
-LINES: 13
+LINES: 18
 ========================================
 
 extends State
-
+var frames = 0
 func enter():
 
 
 	fighter.hit_active = true
-
+	frames = 0
 
 func physics_update(_delta):
+	frames +=1 
+	var active = fighter.current_move_data["active"] - fighter.current_move_data["startup"]
+	if frames >= active :
+		machine.change_state("Attack_Recovery")
 
-	pass
-func recover():
-	machine.change_state("Attack_Recovery")
+func exit():
+	print("goes to recovery  AT:",
+		round(fighter.anim.current_animation_position * 60))
+	fighter.hit_active = false
 
 
 
 ========================================
 FILE: /scripts/State Machine/States/Attack_Recovery.gd
-LINES: 22
+LINES: 31
 ========================================
 
 extends State
-
+var frames = 0
 func enter():
 
 
 	fighter.hit_active = false
-	
+	frames = 0
 
 func physics_update(_delta):
-
-	pass
-func end_move():
-		fighter.hit_active = false
-		fighter.movable = true
-		fighter.current_move = ""
-		fighter.current_move_data = {}
+	frames +=1 
+	var recover = fighter.current_move_data["recovery"] - fighter.current_move_data["active"]
+	if frames >= recover :
 		if fighter.is_on_floor():
 			machine.change_state("Idle")
 		elif fighter.velocity.y>0 :
@@ -830,33 +857,49 @@ func end_move():
 		elif fighter.velocity.y<0:
 			machine.change_state("Jump")
 
+func end_move():
+	
+	print("ends AT:",
+	round(fighter.anim.current_animation_position * 60))
+func exit():
+	if fighter.is_on_floor():
+		fighter.air_dashable= true
+	fighter.movable = true
+	fighter.current_move = ""
+	fighter.hit_active = false
+	fighter.current_move_data = {}
+	fighter.movement_lock = false
+
 
 
 ========================================
 FILE: /scripts/State Machine/States/Attack_Startup.gd
-LINES: 20
+LINES: 23
 ========================================
 
 extends State
-
+var frame = 0
 func enter():
-
+	frame = 0
 	if fighter.current_move_data == null:
 		push_error("Attack entered with NULL move data")
 		machine.change_state("Idle")
 		return
 	fighter.buffer.clear_buffer()
 
-	fighter.movable = false
+	fighter.movement_lock = true
 	fighter.hit_active = false
 	fighter.hit_targets.clear()
 
 	fighter.anim.play(fighter.current_move_data["name"])
 func physics_update(_delta):
-
-	pass
+	frame +=1 
+	var startup = fighter.current_move_data["startup"]
+	if frame >= startup :
+		machine.change_state("Attack_Active")
 func activate_hit():
-	machine.change_state("Attack_Active")
+	print("ACTIVE AT:",
+		round(fighter.anim.current_animation_position * 60))
 
 
 
@@ -1089,7 +1132,7 @@ func physics_update(_delta):
 
 ========================================
 FILE: /scripts/State Machine/States/HITSTUN.gd
-LINES: 23
+LINES: 24
 ========================================
 
 extends State
@@ -1100,6 +1143,7 @@ func enter():
 	fighter.anim.play("Punched")
 	timer = fighter.hitstun_time / 60.0
 	fighter.movable = false
+	fighter.movement_lock = true
 	
 
 
@@ -1110,7 +1154,7 @@ func physics_update(delta):
 
 	if timer <= 0:
 		fighter.movable = true
-
+		fighter.movement_lock = false
 		if fighter.is_on_floor():
 			machine.change_state("Idle")
 		else:

@@ -25,7 +25,6 @@ metadata/_edit_lock_ = true
 [node name="player" parent="." groups=["Fighters"] instance=ExtResource("2_dqjcw")]
 position = Vector2(318, 443)
 scale = Vector2(5.261, 4)
-collision_mask = 2
 metadata/_edit_group_ = true
 
 [node name="CollisionShape2D" parent="player/hurtbox" index="0"]
@@ -34,7 +33,6 @@ position = Vector2(0, -2.55)
 [node name="fighter" parent="." groups=["Fighters"] instance=ExtResource("2_dqjcw")]
 position = Vector2(849, 411)
 scale = Vector2(4, 4)
-collision_mask = 2
 
 [node name="sprites" parent="fighter" index="0"]
 position = Vector2(2.15007, -6.74992)
@@ -202,7 +200,6 @@ offset_left = 1011.0
 offset_top = 58.0
 offset_right = 1065.0
 offset_bottom = 537.0
-fit_content = true
 scroll_active = false
 tab_size = 8
 script = ExtResource("5_ie6hc")

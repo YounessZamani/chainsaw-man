@@ -45,7 +45,10 @@ var hitstop_time = 0
 
 
 func _ready():
+	
 	load_moves()
+	for move in moves:
+		print(move["name"],get_anim_frames(move["name"]))
 	buffer.body = self
 	find_opponent()
 	state_machine.start(self)
@@ -158,7 +161,7 @@ func check_hits():
 
 
 func updateside():
-	if not is_on_floor():
+	if not is_on_floor() and state_machine.current_state.name != "Fall":
 		return
 	if opponent == null:
 		return
@@ -223,20 +226,21 @@ func resolve_pushbox():
 		return
 
 	# only push when both grounded
-	if not is_on_floor() or not opponent.is_on_floor():
-		return
+	if abs(opponent.global_position.y - global_position.y) <=80:
+		var min_distance = 80
 
-	var min_distance = 80
+		var dist = opponent.global_position.x - global_position.x
 
-	var dist = opponent.global_position.x - global_position.x
+		if abs(dist) < min_distance:
 
-	if abs(dist) < min_distance:
+			var push = (min_distance - abs(dist)) / 2.0
 
-		var push = (min_distance - abs(dist)) / 2.0
-
-		if dist > 0:
-			global_position.x -= push
-			opponent.global_position.x += push
-		else:
-			global_position.x += push
-			opponent.global_position.x -= push
+			if dist > 0:
+				global_position.x -= push
+				opponent.global_position.x += push
+			else:
+				global_position.x += push
+				opponent.global_position.x -= push
+func get_anim_frames(anim_name):
+	var animframes = $AnimationPlayer.get_animation(anim_name)
+	return round(animframes.length * 60)

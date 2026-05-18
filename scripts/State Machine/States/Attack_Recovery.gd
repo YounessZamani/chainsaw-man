@@ -1,22 +1,31 @@
 extends State
-
+var frames = 0
 func enter():
 
 
 	fighter.hit_active = false
-	
+	frames = 0
 
 func physics_update(_delta):
-
-	pass
-func end_move():
-		fighter.hit_active = false
-		fighter.movable = true
-		fighter.current_move = ""
-		fighter.current_move_data = {}
+	frames +=1 
+	var recover = fighter.current_move_data["recovery"] - fighter.current_move_data["active"]
+	if frames >= recover :
 		if fighter.is_on_floor():
 			machine.change_state("Idle")
 		elif fighter.velocity.y>0 :
 			machine.change_state("Fall")
 		elif fighter.velocity.y<0:
 			machine.change_state("Jump")
+
+func end_move():
+	
+	print("ends AT:",
+	round(fighter.anim.current_animation_position * 60))
+func exit():
+	if fighter.is_on_floor():
+		fighter.air_dashable= true
+	fighter.movable = true
+	fighter.current_move = ""
+	fighter.hit_active = false
+	fighter.current_move_data = {}
+	fighter.movement_lock = false

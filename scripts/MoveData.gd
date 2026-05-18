@@ -15,7 +15,7 @@ var dmg := 0
 var combo := 0
 var max_combo := 0
 var startup := 0
-var advantage := 0
+var advantage := 0.00
 var last_combo_hits =0
 var last_health := 100
 
@@ -94,7 +94,7 @@ func update_startup():
 
 func update_advantage():
 
-	if fighter.current_move_data == null:
+	if fighter.current_move_data.is_empty():
 		return
 
 	var move_data = fighter.current_move_data
@@ -102,17 +102,16 @@ func update_advantage():
 	if !move_data.has("recovery"):
 		return
 
-	var recovery = move_data["recovery"]
-
+	var recovery = move_data["recovery"]- move_data["active"]
 	# assuming hitstun_time/blockstun_time are stored in FRAMES
 
 	if opp.is_in_state("Hitstun"):
 
-		advantage = opp.hitstun_time/60- recovery
+		advantage = round(opp.hitstun_time/60.00- recovery)
 
 	elif opp.is_in_state("Block"):
 
-		advantage = opp.blockstun_time/60 - recovery
+		advantage = round(opp.blockstun_time/60.00 - recovery)
 
 	else:
 
