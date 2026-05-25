@@ -3,7 +3,7 @@ var frames = 0
 func enter():
 
 
-	fighter.hit_active = false
+	fighter.hitbox.disable_all_boxes()
 	frames = 0
 
 func physics_update(_delta):
@@ -26,6 +26,6 @@ func exit():
 		fighter.air_dashable= true
 	fighter.movable = true
 	fighter.current_move = ""
-	fighter.hit_active = false
+	fighter.hitbox.disable_all_boxes()
 	fighter.current_move_data = {}
 	fighter.movement_lock = false

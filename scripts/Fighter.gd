@@ -52,7 +52,7 @@ func _ready():
 	buffer.body = self
 	find_opponent()
 	state_machine.start(self)
-
+	hitbox.hit_landed.connect(_on_hit_landed)
 
 func _physics_process(delta):
 	if hitstop_time > 0:
@@ -74,12 +74,11 @@ func _physics_process(delta):
 
 	state_machine.physics_update(delta)
 
-	check_hits()
 
 	move_and_slide()
 	resolve_pushbox()
 	update_hitbox_position()
-
+	
 func set_crouch(value):
 	wants_crouch = value
 
@@ -108,55 +107,41 @@ func get_current_move_data():
 	return null
 
 
-func take_hit(damage, push, stun,freeze):
-	apply_hitstop(freeze)
-	combo_hits +=1
-	if !blocking:
-		health -= damage
+func take_hit(move):
+
+	var blocked = can_block(move)
+
+	apply_hitstop(move["freeze"])
+
+	combo_hits += 1
+
+	if !blocked:
+		health -= move["damage"]
+
 		if !look_right:
-			velocity.x = push
-		else: velocity.x = -push
-		hitstun_time = stun
+			velocity.x = move["push"]
+		else:
+			velocity.x = -move["push"]
+
+		hitstun_time = move["stun"]
 
 		state_machine.change_state("Hitstun")
+
 	else:
-		health -= damage/100
+		health -= move["damage"] / 100
+
 		if !look_right:
-			velocity.x = push/20
-		else: velocity.x = -push/20
-		blockstun_time = stun/2
-	
+			velocity.x = move["push"] / 20
+		else:
+			velocity.x = -move["push"] / 20
+
+		blockstun_time = move["stun"] / 2
 
 		state_machine.change_state("Block")
 
 # =========================
 # HIT DETECTION
 # =========================
-
-func check_hits():
-
-	if !hit_active:
-		return
-
-	for area in hitbox.get_overlapping_areas():
-
-		if area.is_in_group("Hurtbox") and area.get_parent() != self:
-
-			var enemy = area.get_parent()
-
-			if enemy in hit_targets:
-				continue
-
-			hit_targets.append(enemy)
-
-			var move = current_move_data
-			apply_hitstop(move["freeze"])
-			enemy.take_hit(
-				move["damage"],
-				move["push"],
-				move["stun"],
-				move["freeze"]
-			)
 
 
 
@@ -244,3 +229,25 @@ func resolve_pushbox():
 func get_anim_frames(anim_name):
 	var animframes = $AnimationPlayer.get_animation(anim_name)
 	return round(animframes.length * 60)
+func _on_hit_landed(enemy, move):
+	
+	apply_hitstop(move["freeze"])
+
+	enemy.take_hit(move)
+func can_block(move):
+
+	if !blocking:
+		return false
+
+	match move["attack_type"]:
+
+		"overhead":
+			return !wants_crouch
+
+		"low":
+			return wants_crouch
+
+		"mid":
+			return true
+
+	return false

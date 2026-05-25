@@ -8,6 +8,8 @@
 	"damage":55,
 	"push":150,
 	"stun":30,
+	"box_type":"high",
+	"attack_type":"overhead",
 	"ground_ok":true,
 	"air_ok":false,
 	"freeze": 12
@@ -21,6 +23,8 @@
 	"damage":7,
 	"push":120,
 	"stun":24,
+	"box_type":"low",
+	"attack_type":"low",
 	"ground_ok":true,
 	"air_ok":false,
 	"freeze": 6
@@ -33,6 +37,8 @@
 	"damage":5,
 	"push":100,
 	"stun":20,
+	"box_type":"mid",
+	"attack_type":"mid",
 	"ground_ok":true,
 	"air_ok":true,
 	"freeze": 6

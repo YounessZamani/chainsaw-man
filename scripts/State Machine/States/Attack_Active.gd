@@ -2,8 +2,8 @@ extends State
 var frames = 0
 func enter():
 
-
-	fighter.hit_active = true
+	
+	fighter.hitbox.enable_box(fighter.current_move_data["box_type"])
 	frames = 0
 
 func physics_update(_delta):
@@ -15,4 +15,4 @@ func physics_update(_delta):
 func exit():
 	print("goes to recovery  AT:",
 		round(fighter.anim.current_animation_position * 60))
-	fighter.hit_active = false
+	fighter.hitbox.disable_all_boxes()

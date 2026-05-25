@@ -1,0 +1,26 @@
+dbfz:
+	only switches sides after a fast dash, a big jump 
+	also cant control self while jumping unless stick is on 7 and 9 positions
+	simply pressing left or right in the air does not move you 
+	cant ove while doing moves 
+	otherwise jump trajectory is predetermined i think
+ggst:
+	almost same thing : fihgter only chnages sides after air action like big jump 
+	dash or double jump 
+	also cant control character movement at all while in the air unlike dbfz 
+	even clicking 7 or 9 doesnt change it, your jump trajectory is predetermined and 
+	will not chanmage it unless you do an action that moves you: like a dash or move
+	
+				 	THINGS TO DO
+	1. add low / high / medium block and attack 
+	2 hit confirm / cancel : as in like allow moves to ccancel into other moves
+	3 centralise everything into frames i still ahve some leftover timer things that use second
+	would like to convert everything into frames
+	4global hitstop , i guess  match manager should pause the whole game  for it to be more stable
+	5 Throws: supposing i have blocks i need something to work against them
+	6different hitstun state : like small stun  air stun knokdown, maybe even knockback 
+	7combo system or counter: just to actually make the tendons of this 
+	8combo scaling: prolly something like a main scaling that goes down from 100 depending on combo 
+	amount like maybe 10% per move in counter + specific move scaling number
+	9need some clean helper methods instead of using mehtods like is_on_floor() all the time also
+	 improve movement lock to only not allow some stuff maybe like can attack can block or whatever
