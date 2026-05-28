@@ -12,7 +12,7 @@ ggst:
 	will not chanmage it unless you do an action that moves you: like a dash or move
 	
 				 	THINGS TO DO
-	1. add low / high / medium block and attack 
+	1. add low / high / medium block and attack : DONE 
 	2 hit confirm / cancel : as in like allow moves to ccancel into other moves
 	3 centralise everything into frames i still ahve some leftover timer things that use second
 	would like to convert everything into frames
@@ -24,3 +24,5 @@ ggst:
 	amount like maybe 10% per move in counter + specific move scaling number
 	9need some clean helper methods instead of using mehtods like is_on_floor() all the time also
 	 improve movement lock to only not allow some stuff maybe like can attack can block or whatever
+	10 can move while on the ground whike attacking cuz it carries momentum from before fix that
+	11if attacked while in startup attack is permenetly sealed in shadow realm(cannot attack anymore)

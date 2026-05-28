@@ -2,10 +2,10 @@
 
 [ext_resource type="Texture2D" uid="uid://8tq3am6ynxpy" path="res://bg.jpg" id="1_naslf"]
 [ext_resource type="PackedScene" uid="uid://bu30alc0nw373" path="res://Fighter.tscn" id="2_dqjcw"]
-[ext_resource type="Script" path="res://scripts/Health_Bar.gd" id="3_ghhrj"]
-[ext_resource type="Script" path="res://scripts/Match Manager.gd" id="3_j88f5"]
-[ext_resource type="Script" path="res://scripts/InputHistory.gd" id="5_ie6hc"]
-[ext_resource type="Script" path="res://scripts/MoveData.gd" id="6_l4l0f"]
+[ext_resource type="Script" path="res://scripts/Stage/Health_Bar.gd" id="3_ghhrj"]
+[ext_resource type="Script" path="res://scripts/Stage/Match Manager.gd" id="3_j88f5"]
+[ext_resource type="Script" path="res://scripts/Stage/InputHistory.gd" id="5_ie6hc"]
+[ext_resource type="Script" path="res://scripts/Stage/MoveData.gd" id="6_l4l0f"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_l7h3e"]
 size = Vector2(1144.5, 20)

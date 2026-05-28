@@ -1,12 +1,12 @@
 extends State
 
-var timer = 0.18
-var dash_speed = 400
+var timer = 24
+var dash_speed = 600
 var dir = 1
 
 func enter():
 
-	timer = 0.4
+	timer = 24
 
 	fighter.movement_lock = true
 
@@ -17,9 +17,9 @@ func enter():
 	else:
 		dir = -1
 	fighter.velocity.y = 0
-func physics_update(delta):
+func physics_update(_delta):
 
-	timer -= delta
+	timer -= 1
 
 	fighter.velocity.x = dash_speed * dir
 	fighter.velocity.y = 0

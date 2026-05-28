@@ -16,7 +16,7 @@ extends Node
 # SETTINGS
 # =========================
 
-@export var buffer_time := 1.0
+@export var buffer_time := 0.7
 @export var deadzone := 0.2
 @export var enabled := true
 var body

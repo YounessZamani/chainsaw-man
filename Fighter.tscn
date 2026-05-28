@@ -1,13 +1,13 @@
 [gd_scene load_steps=152 format=3 uid="uid://bu30alc0nw373"]
 
-[ext_resource type="Script" path="res://scripts/Fighter.gd" id="1_51a1q"]
+[ext_resource type="Script" path="res://scripts/fighter stuff/Fighter.gd" id="1_51a1q"]
 [ext_resource type="Texture2D" uid="uid://b0xebpi0lp8mb" path="res://sprites/TheDummyAnim-SpriteSheet.png" id="2_2sde4"]
 [ext_resource type="Texture2D" uid="uid://dh3fur0yif4a5" path="res://sprites/Harpy Fighter/Harpy Fighter/Sprite Sheets/Sheet235B.png" id="3_r6mar"]
-[ext_resource type="Script" path="res://scripts/input_buffer.gd" id="3_vhkdf"]
-[ext_resource type="Script" path="res://hitbox.gd" id="5_rsbvv"]
+[ext_resource type="Script" path="res://scripts/fighter stuff/input_buffer.gd" id="3_vhkdf"]
+[ext_resource type="Script" path="res://scripts/fighter stuff/hitbox.gd" id="5_rsbvv"]
 [ext_resource type="Script" path="res://scripts/Controller.gd" id="5_sknr6"]
+[ext_resource type="Script" path="res://scripts/fighter stuff/hurtbox.gd" id="6_5w7up"]
 [ext_resource type="Script" path="res://scripts/State Machine/StateMachine.gd" id="6_b5sl4"]
-[ext_resource type="Script" path="res://hurtbox.gd" id="6_e76iq"]
 [ext_resource type="Script" path="res://scripts/State Machine/States/IDLE.gd" id="7_qjyei"]
 [ext_resource type="Script" path="res://scripts/State Machine/States/WALK.gd" id="8_s2xs1"]
 [ext_resource type="Script" path="res://scripts/State Machine/States/JUMP.gd" id="9_d5qtr"]
@@ -1514,9 +1514,10 @@ collision_mask = 2
 script = ExtResource("1_51a1q")
 
 [node name="sprites" type="AnimatedSprite2D" parent="."]
-position = Vector2(0.92967, -8.81049)
+position = Vector2(-1.85934, -8.81049)
 sprite_frames = SubResource("SpriteFrames_8v265")
-animation = &"Block"
+animation = &"Back_dash"
+autoplay = "Idle"
 flip_h = true
 
 [node name="InputBuffer" type="Node" parent="."]
@@ -1555,7 +1556,7 @@ metadata/_edit_group_ = true
 [node name="hurtbox" type="Area2D" parent="." groups=["Hurtbox"]]
 collision_layer = 8
 collision_mask = 4
-script = ExtResource("6_e76iq")
+script = ExtResource("6_5w7up")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="hurtbox"]
 shape = SubResource("RectangleShape2D_lhpck")

@@ -1,17 +1,14 @@
 GODOT PROJECT SCRIPT EXPORT
-Generated: 2026-05-25T09:57:04
-Total scripts: 31
+Generated: 2026-05-27T19:35:05
+Total scripts: 30
 
 ==== FILE INDEX ====
-res:///hitbox.gd
-res:///hurtbox.gd
 res:///script merger.gd
 res:///scripts/Controller.gd
-res:///scripts/Fighter.gd
-res:///scripts/Health_Bar.gd
-res:///scripts/InputHistory.gd
-res:///scripts/Match Manager.gd
-res:///scripts/MoveData.gd
+res:///scripts/Stage/Health_Bar.gd
+res:///scripts/Stage/InputHistory.gd
+res:///scripts/Stage/Match Manager.gd
+res:///scripts/Stage/MoveData.gd
 res:///scripts/State Machine/State.gd
 res:///scripts/State Machine/StateMachine.gd
 res:///scripts/State Machine/States/Air_dash.gd
@@ -32,95 +29,12 @@ res:///scripts/State Machine/States/Land.gd
 res:///scripts/State Machine/States/Run.gd
 res:///scripts/State Machine/States/WALK.gd
 res:///scripts/dummy_controller.gd
-res:///scripts/game.gd
-res:///scripts/input_buffer.gd
+res:///scripts/fighter stuff/Fighter.gd
+res:///scripts/fighter stuff/hitbox.gd
+res:///scripts/fighter stuff/hurtbox.gd
+res:///scripts/fighter stuff/input_buffer.gd
 
 ==== BEGIN FILES ====
-
-========================================
-FILE: /hitbox.gd
-LINES: 53
-========================================
-
-extends Area2D
-
-signal hit_landed(target, move_data)
-
-var fighter : Fighter
-
-
-func _ready():
-	fighter = get_parent()
-	disable_all_boxes()
-func _physics_process(_delta):
-	check_hits()
-
-func check_hits():
-	for c in get_children():
-	
-		if c.disabled:
-			return
-
-		for area in get_overlapping_areas():
-
-			if not area is Hurtbox:
-				continue
-
-			var hurtbox : Hurtbox = area
-
-			if !hurtbox.can_be_hit():
-				continue
-
-			var enemy = hurtbox.fighter
-
-			# IMPORTANT
-			if enemy == fighter:
-				continue
-
-			if enemy in fighter.hit_targets:
-				continue
-
-			fighter.hit_targets.append(enemy)
-
-			emit_signal(
-				"hit_landed",
-				enemy,
-				fighter.current_move_data
-			)
-func enable_box(box_name):
-	disable_all_boxes()
-	get_node(box_name).disabled = false
-	get_node(box_name).visible = true
-func disable_all_boxes():
-	for c in get_children():
-		c.disabled = true
-		c.visible = false
-
-
-
-========================================
-FILE: /hurtbox.gd
-LINES: 16
-========================================
-
-extends Area2D
-class_name Hurtbox
-@onready var fighter : Fighter = get_parent()
-
-var vulnerable := true
-var invincible := false
-
-func can_be_hit():
-
-	if !vulnerable:
-		return false
-
-	if invincible:
-		return false
-
-	return true
-
-
 
 ========================================
 FILE: /script merger.gd
@@ -277,7 +191,923 @@ func control(body):
 
 
 ========================================
-FILE: /scripts/Fighter.gd
+FILE: /scripts/Stage/Health_Bar.gd
+LINES: 11
+========================================
+
+extends ProgressBar
+
+@export var fighter : Fighter
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(_delta):
+	value = fighter.health
+
+
+
+========================================
+FILE: /scripts/Stage/InputHistory.gd
+LINES: 41
+========================================
+
+extends RichTextLabel
+
+@export var fighter : Fighter
+
+func _physics_process(_delta):
+
+	if fighter == null:
+		return
+
+	text = ""
+
+	for i in range(fighter.buffer.input_history.size() - 1, -1, -1):
+
+		var entry = fighter.buffer.input_history[i]
+
+		var dir = convert_input(entry["dir"])
+		var btn = convert_input(entry["button"])
+
+		text += dir
+
+		if btn != "":
+			text += "\t" + btn
+
+		text += "\n"
+
+func convert_input(i):
+
+	match i:
+		"1": return "↙"
+		"2": return "↓"
+		"3": return "↘"
+		"4": return "←"
+		"5": return "•"
+		"6": return "→"
+		"7": return "↖"
+		"8": return "↑"
+		"9": return "↗"
+		"H": return "P"
+		"L": return "K"
+
+	return i
+
+
+
+========================================
+FILE: /scripts/Stage/Match Manager.gd
+LINES: 56
+========================================
+
+extends Node
+
+@onready var p1 =$"../player"
+@onready var p2 =$"../fighter"
+@onready var win = $"../Ui layers/WIN text"
+@onready var butt =$"../Ui layers/restart button"
+var p1_initial_health 
+var p2_initial_health 
+var p1_initial_position
+var p2_initial_position 
+var game_over = false 
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	p1_initial_health = p1.health
+	p2_initial_health = p2.health
+	p1_initial_position = p1.position
+	p2_initial_position = p2.position
+	butt.visible = false 
+	butt.disabled = true
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(_delta):
+	if game_over == true:
+		return
+	if p1.health <= 0:
+		win.text = "Player 2 wins"
+		show_butt()
+		game_over = true
+	if p2.health <= 0:
+		win.text = "Player 1 wins"
+		show_butt()
+		game_over = true
+func reset_health():
+	p1.health = p1_initial_health
+	p2.health = p2_initial_health
+func reset_position():
+	p1.position = p1_initial_position
+	p2.position = p2_initial_position
+func _on_restart_button_pressed():
+	print("RESET CLICKED")
+	print("Before reset p1:", p1.health, "p2:", p2.health)
+
+	reset_health()
+	reset_position()
+
+	print("After reset p1:", p1.health, "p2:", p2.health)
+
+	hide_butt()
+	win.text = ""
+	game_over = false
+func show_butt():
+	butt.visible = true
+	butt.disabled = false
+func hide_butt():
+	butt.disabled = true
+	butt.visible = false
+
+
+
+========================================
+FILE: /scripts/Stage/MoveData.gd
+LINES: 118
+========================================
+
+extends GridContainer
+
+
+@onready var Damage = $"Damage value"
+@onready var Combo_Damage = $"Combo damage value"
+@onready var Max_Damage = $"Max combo damage value"
+@onready var Startup = $"Attack Startup value"
+@onready var Advantage = $"Frame advantage value"
+
+@export var fighter : Fighter
+
+var opp : Fighter
+
+var dmg := 0
+var combo := 0
+var max_combo := 0
+var startup := 0
+var advantage := 0.00
+var last_combo_hits =0
+var last_health := 100
+
+
+func _ready():
+
+	if fighter == null:
+		push_error("No fighter assigned to MoveDataDisplay")
+		return
+
+	fighter.find_opponent()
+	opp = fighter.opponent
+
+	if opp:
+		last_health = opp.health
+
+
+func _process(_delta):
+
+	if fighter == null or opp == null:
+		return
+
+	update_damage()
+	update_combo()
+	update_startup()
+	update_advantage()
+	update_labels()
+
+
+func update_labels():
+
+	Damage.text = str(dmg)
+	Combo_Damage.text = str(combo)
+	Max_Damage.text = str(max_combo)
+	Startup.text = str(startup)
+	Advantage.text = str(advantage)
+
+
+func update_damage():
+
+	var current_health = opp.health
+
+	if current_health < last_health:
+
+		dmg = last_health - current_health
+
+	last_health = current_health
+
+func update_combo():
+
+	if opp.combo_hits > last_combo_hits:
+
+		combo += dmg
+
+		last_combo_hits = opp.combo_hits
+
+		if combo > max_combo:
+			max_combo = combo
+
+	# combo ended
+	if !opp.is_in_state("Hitstun"):
+
+		opp.combo_hits = 0
+		last_combo_hits = 0
+		combo = 0
+
+func update_startup():
+
+	if fighter.current_move_data == null:
+		return
+
+	var move_data = fighter.current_move_data
+
+	if move_data.has("startup"):
+		startup = move_data["startup"]
+
+func update_advantage():
+
+	if fighter.current_move_data.is_empty():
+		return
+
+	var move_data = fighter.current_move_data
+
+	if !move_data.has("recovery"):
+		return
+
+	var recovery = move_data["recovery"]- move_data["active"]
+	# assuming hitstun_time/blockstun_time are stored in FRAMES
+
+	if opp.is_in_state("Hitstun"):
+
+		advantage = round(opp.hitstun_time/60.00- recovery)
+
+	elif opp.is_in_state("Block"):
+
+		advantage = round(opp.blockstun_time/60.00 - recovery)
+
+	else:
+
+		advantage = 0
+
+
+
+========================================
+FILE: /scripts/State Machine/State.gd
+LINES: 40
+========================================
+
+extends Node
+class_name State
+
+var fighter
+var machine
+
+func enter():
+	pass
+
+func exit():
+	pass
+
+func physics_update(_delta):
+	pass
+
+func try_attack():
+
+	var move_name = fighter.get_move_from_input()
+
+	if move_name == "":
+		return false
+
+	var next_move = fighter.get_move_data_by_name(move_name)
+
+	if !fighter.current_move_data.is_empty():
+
+		if !can_cancel_into(next_move):
+			return false
+
+	fighter.current_move = move_name
+	fighter.current_move_data = next_move
+
+	machine.change_state("Attack_Startup")
+
+	return true
+func can_cancel_into(next_move):
+
+	var allowed = fighter.current_move_data.get("cancel_into", [])
+
+	return next_move["type"] in allowed
+
+
+
+========================================
+FILE: /scripts/State Machine/StateMachine.gd
+LINES: 25
+========================================
+
+extends Node
+
+var fighter
+var current_state : State
+
+func start(body):
+	fighter = body
+
+	for child in get_children():
+		if child is State:
+			child.fighter = fighter
+			child.machine = self
+
+	change_state("Idle")
+
+func physics_update(delta):
+	if current_state:
+		current_state.physics_update(delta)
+
+func change_state(Name):
+	if current_state:
+		current_state.exit()
+	print("state is : ", Name)
+	current_state = get_node(Name)
+	current_state.enter()
+
+
+
+========================================
+FILE: /scripts/State Machine/States/Air_dash.gd
+LINES: 33
+========================================
+
+extends State
+
+var timer = 0.18
+var dash_speed = 400
+var dir = 1
+
+func enter():
+
+	timer = 0.4
+
+	fighter.movement_lock = true
+
+	fighter.anim.play("Dash")
+
+	if fighter.look_right:
+		dir = 1
+	else:
+		dir = -1
+	fighter.velocity.y = 0
+func physics_update(delta):
+
+	timer -= delta
+
+	fighter.velocity.x = dash_speed * dir
+	fighter.velocity.y = 0
+
+	if try_attack():
+		return
+
+	if timer <= 0:
+		machine.change_state("Fall")
+func exit():
+	fighter.movement_lock = false
+
+
+
+========================================
+FILE: /scripts/State Machine/States/Attack_Active.gd
+LINES: 23
+========================================
+
+extends State
+var frames = 0
+func enter():
+
+	
+	fighter.hitbox.enable_box(fighter.current_move_data["box_type"])
+	frames = 0
+
+func physics_update(_delta):
+	frames +=1 
+	if fighter.current_move_data.get("cancelable", false):
+
+		if try_attack():
+			print("ATTACK HAS BEEN CANCELED")
+			return
+	var active = fighter.current_move_data["active"] - fighter.current_move_data["startup"]
+	if frames >= active :
+		machine.change_state("Attack_Recovery")
+
+func exit():
+	print("goes to recovery  AT:",
+		round(fighter.anim.current_animation_position * 60))
+	fighter.hitbox.disable_all_boxes()
+
+
+
+========================================
+FILE: /scripts/State Machine/States/Attack_Recovery.gd
+LINES: 31
+========================================
+
+extends State
+var frames = 0
+func enter():
+
+
+	fighter.hitbox.disable_all_boxes()
+	frames = 0
+
+func physics_update(_delta):
+	frames +=1 
+	var recover = fighter.current_move_data["recovery"] - fighter.current_move_data["active"]
+	if frames >= recover :
+		if fighter.is_on_floor():
+			machine.change_state("Idle")
+		elif fighter.velocity.y>0 :
+			machine.change_state("Fall")
+		elif fighter.velocity.y<0:
+			machine.change_state("Jump")
+
+func end_move():
+	
+	print("ends AT:",
+	round(fighter.anim.current_animation_position * 60))
+func exit():
+	if fighter.is_on_floor():
+		fighter.air_dashable= true
+	fighter.movable = true
+	fighter.current_move = ""
+	fighter.hitbox.disable_all_boxes()
+	fighter.current_move_data = {}
+	fighter.movement_lock = false
+
+
+
+========================================
+FILE: /scripts/State Machine/States/Attack_Startup.gd
+LINES: 23
+========================================
+
+extends State
+var frame = 0
+func enter():
+	frame = 0
+	if fighter.current_move_data == null:
+		push_error("Attack entered with NULL move data")
+		machine.change_state("Idle")
+		return
+	fighter.buffer.clear_buffer()
+
+	fighter.movement_lock = true
+	fighter.hit_active = false
+	fighter.hit_targets.clear()
+
+	fighter.anim.play(fighter.current_move_data["name"])
+func physics_update(_delta):
+	frame +=1 
+	var startup = fighter.current_move_data["startup"]
+	if frame >= startup :
+		machine.change_state("Attack_Active")
+func activate_hit():
+	print("ACTIVE AT:",
+		round(fighter.anim.current_animation_position * 60))
+
+
+
+========================================
+FILE: /scripts/State Machine/States/Back_dash.gd
+LINES: 21
+========================================
+
+extends State
+var timer = 0.5
+var dash_speed = 500
+var dir = 1
+func enter():
+	timer = 0.30
+	fighter.movement_lock = true
+	fighter.anim.play("Back_Dash")
+	if fighter.look_right:
+		dir = -1
+	else:
+		dir = 1
+func exit():
+	fighter.movement_lock = false
+func physics_update(delta):
+	
+	timer -= delta
+	fighter.velocity.x = dash_speed * dir
+	if timer <= 0:
+		machine.change_state("Idle")
+		return
+
+
+
+========================================
+FILE: /scripts/State Machine/States/Block.gd
+LINES: 25
+========================================
+
+extends State
+
+var timer = 0.0
+
+func enter():
+	fighter.anim.play("Block")
+	timer = fighter.blockstun_time 
+	fighter.movable = false
+	
+
+
+
+func physics_update(_delta):
+	
+	timer -= 1
+
+	if timer <= 0:
+		fighter.movable = true
+
+		if fighter.is_on_floor():
+			machine.change_state("Idle")
+			return
+		else:
+			machine.change_state("Fall")
+			return
+
+
+
+========================================
+FILE: /scripts/State Machine/States/CROUCH_END.gd
+LINES: 24
+========================================
+
+extends State
+
+
+# Called when the node enters the scene tree for the first time.
+func enter():
+	fighter.anim.play("CrouchEnd")
+	fighter.jumpable= true
+	fighter.movable = true
+	
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func physics_update(_delta):
+	if !fighter.is_on_floor():
+		machine.change_state("Jump")
+		return
+
+	if !fighter.anim.is_playing():
+		if abs(fighter.velocity.x) > 0:
+			machine.change_state("Walk")
+			fighter.crouch_charged = false
+		else:
+			machine.change_state("Idle")
+			fighter.crouch_charged = false
+		return
+
+
+
+========================================
+FILE: /scripts/State Machine/States/CROUCH_HOLD.gd
+LINES: 23
+========================================
+
+extends State
+
+
+# Called when the node enters the scene tree for the first time.
+func enter():
+	fighter.anim.play("CrouchHold") # Replace with function body.
+	
+	fighter.jumpable = false
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func physics_update(_delta):
+	fighter.velocity.x = 0
+
+	if try_attack():
+		return
+	if !fighter.is_on_floor():
+		machine.change_state("Jump")
+		return
+
+	if !fighter.wants_crouch:
+		fighter.jumpable = true
+		machine.change_state("Crouch_End")
+		return
+
+
+
+========================================
+FILE: /scripts/State Machine/States/CROUCH_START.gd
+LINES: 22
+========================================
+
+extends State
+
+
+# Called when the node enters the scene tree for the first time.
+func enter():
+	fighter.anim.play("CrouchStart")
+	fighter.movable = false# Replace with function body.
+	fighter.jumpable = false
+	fighter.crouch_charged = true
+	
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func physics_update(_delta):
+	if !fighter.is_on_floor():
+		machine.change_state("Jump")
+		return
+
+	if !fighter.anim.is_playing():
+		if fighter.wants_crouch:
+			machine.change_state("Crouch_Hold")
+		else:
+			machine.change_state("Crouch_End")
+		return
+
+
+
+========================================
+FILE: /scripts/State Machine/States/Dash.gd
+LINES: 37
+========================================
+
+extends State
+var timer = 0.10
+var dash_speed = 900
+var dir = 1
+func enter():
+	timer = 0.10
+	fighter.anim.play("Dash")
+	fighter.movement_lock = true
+	if fighter.look_right:
+		dir = 1
+	else:
+		dir = -1
+	print(fighter.dashable, fighter.runnable)
+func physics_update(delta):
+	
+	timer -= delta
+	fighter.velocity.x = dash_speed * dir
+	if timer <= 0:
+		if try_attack():
+			return
+		if fighter.is_on_floor():
+			if fighter.wants_crouch :
+				machine.change_state("Crouch_Start")
+				return
+
+			if abs(fighter.velocity.x) > 0 and !fighter.runnable :
+				fighter.movement_lock = false
+				machine.change_state("Walk")
+				return
+			if fighter.runnable :
+				machine.change_state("Run")
+				return
+			
+			if fighter.velocity.x == 0 and !fighter.runnable :
+				fighter.movement_lock = false
+				machine.change_state("Idle")
+				return
+
+
+
+========================================
+FILE: /scripts/State Machine/States/FALL.gd
+LINES: 19
+========================================
+
+extends State
+
+func enter():
+	fighter.anim.play("Fall")
+	fighter.jumpable = false
+	fighter.velocity.y = 0
+
+func physics_update(_delta):
+	if try_attack():
+		return
+
+	if fighter.is_on_floor():
+		machine.change_state("Land")
+		fighter.air_dashable = true
+		return
+	if fighter.air_dashable and fighter.dashable:
+		machine.change_state("Air_dash")
+		fighter.air_dashable = false
+		return
+
+
+
+========================================
+FILE: /scripts/State Machine/States/HITSTUN.gd
+LINES: 24
+========================================
+
+extends State
+
+var timer = 0
+
+func enter():
+	fighter.anim.play("Punched")
+	timer = fighter.hitstun_time 
+	fighter.movable = false
+	fighter.movement_lock = true
+	
+
+
+
+func physics_update(_delta):
+	
+	timer -= 1
+
+	if timer <= 0:
+		fighter.movable = true
+		fighter.movement_lock = false
+		if fighter.is_on_floor():
+			machine.change_state("Idle")
+		else:
+			machine.change_state("Fall")
+
+
+
+========================================
+FILE: /scripts/State Machine/States/IDLE.gd
+LINES: 28
+========================================
+
+extends State
+
+func enter():
+	fighter.anim.play("Idle")
+	fighter.movable = true
+	fighter.jumpable = true
+	
+func physics_update(_delta):
+	if try_attack():
+		return
+
+	if !fighter.is_on_floor() :
+		machine.change_state("Jump")
+		return
+
+	if fighter.wants_crouch:
+		machine.change_state("Crouch_Start")
+		return
+
+	if abs(fighter.velocity.x) > 0:
+		machine.change_state("Walk")
+		return
+	if fighter.dashable:
+		if fighter.back_dashable:
+			machine.change_state("Back_dash")
+		else:
+			machine.change_state("Dash")
+			return
+
+
+
+========================================
+FILE: /scripts/State Machine/States/JUMP.gd
+LINES: 16
+========================================
+
+extends State
+
+func enter():
+	fighter.anim.play("Jump")
+	
+func physics_update(_delta):
+	if try_attack():
+		return
+
+	if fighter.velocity.y > 0:
+		machine.change_state("Fall")
+		return
+	if fighter.air_dashable and fighter.dashable:
+		fighter.air_dashable = false
+		machine.change_state("Air_dash")
+		return
+
+
+
+========================================
+FILE: /scripts/State Machine/States/Land.gd
+LINES: 15
+========================================
+
+extends State
+
+
+# Called when the node enters the scene tree for the first time.
+func enter():
+	fighter.anim.play("Landing") # Replace with function body.
+	fighter.movable = false
+	
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+
+
+
+func Landing():
+	machine.change_state("Idle")
+
+
+
+========================================
+FILE: /scripts/State Machine/States/Run.gd
+LINES: 35
+========================================
+
+extends State
+var timer = 3.0
+var dir = 1
+var run_speed = 400
+func enter():
+	timer = 1.0
+	fighter.anim.play("Run")
+	if fighter.look_right:
+		dir = 1
+	else:
+		dir = -1
+func exit():
+	fighter.movement_lock = false	
+func physics_update(delta):
+	timer -= delta
+	fighter.velocity.x = run_speed * dir
+	if timer<=0 or not fighter.runnable:
+		if try_attack():
+			return
+
+		if !fighter.is_on_floor() :
+			machine.change_state("Jump")
+			return
+
+		if fighter.wants_crouch:
+			machine.change_state("Crouch_Start")
+			return
+
+		if abs(fighter.velocity.x) > 0 and !fighter.dashable:
+			fighter.dashable = false
+			machine.change_state("Walk")
+			return
+		if fighter.velocity.x == 0 and !fighter.dashable:
+			machine.change_state("Idle")
+			return
+
+
+
+========================================
+FILE: /scripts/State Machine/States/WALK.gd
+LINES: 26
+========================================
+
+extends State
+
+func enter():
+	fighter.anim.play("Walk")
+	
+func physics_update(_delta):
+	if try_attack():
+		return
+
+	if !fighter.is_on_floor():
+		machine.change_state("Jump")
+		return
+
+	if fighter.wants_crouch:
+		machine.change_state("Crouch_Start")
+		return
+
+	if fighter.velocity.x == 0:
+		machine.change_state("Idle")
+		return
+	if fighter.dashable:
+		if fighter.back_dashable:
+			machine.change_state("Back_dash")
+		else:
+			machine.change_state("Dash")
+			return
+
+
+
+========================================
+FILE: /scripts/dummy_controller.gd
+LINES: 8
+========================================
+
+extends Node
+
+func control(body):
+	if body.state == body.State.HITSTUN:
+		return
+	body.velocity.x = 0
+	body.anim.flip_h = true
+	# does nothing / stands still
+
+
+
+========================================
+FILE: /scripts/fighter stuff/Fighter.gd
 LINES: 253
 ========================================
 
@@ -538,915 +1368,92 @@ func can_block(move):
 
 
 ========================================
-FILE: /scripts/Health_Bar.gd
-LINES: 11
+FILE: /scripts/fighter stuff/hitbox.gd
+LINES: 53
 ========================================
 
-extends ProgressBar
+extends Area2D
 
-@export var fighter : Fighter
-# Called when the node enters the scene tree for the first time.
+signal hit_landed(target, move_data)
+
+var fighter : Fighter
+
+
 func _ready():
-	pass # Replace with function body.
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta):
-	value = fighter.health
-
-
-
-========================================
-FILE: /scripts/InputHistory.gd
-LINES: 41
-========================================
-
-extends RichTextLabel
-
-@export var fighter : Fighter
-
+	fighter = get_parent()
+	disable_all_boxes()
 func _physics_process(_delta):
+	check_hits()
 
-	if fighter == null:
-		return
-
-	text = ""
-
-	for i in range(fighter.buffer.input_history.size() - 1, -1, -1):
-
-		var entry = fighter.buffer.input_history[i]
-
-		var dir = convert_input(entry["dir"])
-		var btn = convert_input(entry["button"])
-
-		text += dir
-
-		if btn != "":
-			text += "\t" + btn
-
-		text += "\n"
-
-func convert_input(i):
-
-	match i:
-		"1": return "↙"
-		"2": return "↓"
-		"3": return "↘"
-		"4": return "←"
-		"5": return "•"
-		"6": return "→"
-		"7": return "↖"
-		"8": return "↑"
-		"9": return "↗"
-		"H": return "P"
-		"L": return "K"
-
-	return i
-
-
-
-========================================
-FILE: /scripts/Match Manager.gd
-LINES: 56
-========================================
-
-extends Node
-
-@onready var p1 =$"../player"
-@onready var p2 =$"../fighter"
-@onready var win = $"../Ui layers/WIN text"
-@onready var butt =$"../Ui layers/restart button"
-var p1_initial_health 
-var p2_initial_health 
-var p1_initial_position
-var p2_initial_position 
-var game_over = false 
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	p1_initial_health = p1.health
-	p2_initial_health = p2.health
-	p1_initial_position = p1.position
-	p2_initial_position = p2.position
-	butt.visible = false 
-	butt.disabled = true
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta):
-	if game_over == true:
-		return
-	if p1.health <= 0:
-		win.text = "Player 2 wins"
-		show_butt()
-		game_over = true
-	if p2.health <= 0:
-		win.text = "Player 1 wins"
-		show_butt()
-		game_over = true
-func reset_health():
-	p1.health = p1_initial_health
-	p2.health = p2_initial_health
-func reset_position():
-	p1.position = p1_initial_position
-	p2.position = p2_initial_position
-func _on_restart_button_pressed():
-	print("RESET CLICKED")
-	print("Before reset p1:", p1.health, "p2:", p2.health)
-
-	reset_health()
-	reset_position()
-
-	print("After reset p1:", p1.health, "p2:", p2.health)
-
-	hide_butt()
-	win.text = ""
-	game_over = false
-func show_butt():
-	butt.visible = true
-	butt.disabled = false
-func hide_butt():
-	butt.disabled = true
-	butt.visible = false
-
-
-
-========================================
-FILE: /scripts/MoveData.gd
-LINES: 118
-========================================
-
-extends GridContainer
-
-
-@onready var Damage = $"Damage value"
-@onready var Combo_Damage = $"Combo damage value"
-@onready var Max_Damage = $"Max combo damage value"
-@onready var Startup = $"Attack Startup value"
-@onready var Advantage = $"Frame advantage value"
-
-@export var fighter : Fighter
-
-var opp : Fighter
-
-var dmg := 0
-var combo := 0
-var max_combo := 0
-var startup := 0
-var advantage := 0.00
-var last_combo_hits =0
-var last_health := 100
-
-
-func _ready():
-
-	if fighter == null:
-		push_error("No fighter assigned to MoveDataDisplay")
-		return
-
-	fighter.find_opponent()
-	opp = fighter.opponent
-
-	if opp:
-		last_health = opp.health
-
-
-func _process(_delta):
-
-	if fighter == null or opp == null:
-		return
-
-	update_damage()
-	update_combo()
-	update_startup()
-	update_advantage()
-	update_labels()
-
-
-func update_labels():
-
-	Damage.text = str(dmg)
-	Combo_Damage.text = str(combo)
-	Max_Damage.text = str(max_combo)
-	Startup.text = str(startup)
-	Advantage.text = str(advantage)
-
-
-func update_damage():
-
-	var current_health = opp.health
-
-	if current_health < last_health:
-
-		dmg = last_health - current_health
-
-	last_health = current_health
-
-func update_combo():
-
-	if opp.combo_hits > last_combo_hits:
-
-		combo += dmg
-
-		last_combo_hits = opp.combo_hits
-
-		if combo > max_combo:
-			max_combo = combo
-
-	# combo ended
-	if !opp.is_in_state("Hitstun"):
-
-		opp.combo_hits = 0
-		last_combo_hits = 0
-		combo = 0
-
-func update_startup():
-
-	if fighter.current_move_data == null:
-		return
-
-	var move_data = fighter.current_move_data
-
-	if move_data.has("startup"):
-		startup = move_data["startup"]
-
-func update_advantage():
-
-	if fighter.current_move_data.is_empty():
-		return
-
-	var move_data = fighter.current_move_data
-
-	if !move_data.has("recovery"):
-		return
-
-	var recovery = move_data["recovery"]- move_data["active"]
-	# assuming hitstun_time/blockstun_time are stored in FRAMES
-
-	if opp.is_in_state("Hitstun"):
-
-		advantage = round(opp.hitstun_time/60.00- recovery)
-
-	elif opp.is_in_state("Block"):
-
-		advantage = round(opp.blockstun_time/60.00 - recovery)
-
-	else:
-
-		advantage = 0
-
-
-
-========================================
-FILE: /scripts/State Machine/State.gd
-LINES: 24
-========================================
-
-extends Node
-class_name State
-
-var fighter
-var machine
-
-func enter():
-	pass
-
-func exit():
-	pass
-
-func physics_update(_delta):
-	pass
-func try_attack():
-	var move = fighter.get_move_from_input()
-
-	if move != "":
-		fighter.current_move = move
-		fighter.current_move_data = fighter.get_move_data_by_name(move)
-		machine.change_state("Attack_Startup")
-		return true
-
-	return false
-
-
-
-========================================
-FILE: /scripts/State Machine/StateMachine.gd
-LINES: 25
-========================================
-
-extends Node
-
-var fighter
-var current_state : State
-
-func start(body):
-	fighter = body
-
-	for child in get_children():
-		if child is State:
-			child.fighter = fighter
-			child.machine = self
-
-	change_state("Idle")
-
-func physics_update(delta):
-	if current_state:
-		current_state.physics_update(delta)
-
-func change_state(Name):
-	if current_state:
-		current_state.exit()
-	print("state is : ", Name)
-	current_state = get_node(Name)
-	current_state.enter()
-
-
-
-========================================
-FILE: /scripts/State Machine/States/Air_dash.gd
-LINES: 33
-========================================
-
-extends State
-
-var timer = 0.18
-var dash_speed = 400
-var dir = 1
-
-func enter():
-
-	timer = 0.4
-
-	fighter.movement_lock = true
-
-	fighter.anim.play("Dash")
-
-	if fighter.look_right:
-		dir = 1
-	else:
-		dir = -1
-	fighter.velocity.y = 0
-func physics_update(delta):
-
-	timer -= delta
-
-	fighter.velocity.x = dash_speed * dir
-	fighter.velocity.y = 0
-
-	if try_attack():
-		return
-
-	if timer <= 0:
-		machine.change_state("Fall")
-func exit():
-	fighter.movement_lock = false
-
-
-
-========================================
-FILE: /scripts/State Machine/States/Attack_Active.gd
-LINES: 18
-========================================
-
-extends State
-var frames = 0
-func enter():
-
+func check_hits():
+	for c in get_children():
 	
-	fighter.hitbox.enable_box(fighter.current_move_data["box_type"])
-	frames = 0
+		if c.disabled:
+			continue
 
-func physics_update(_delta):
-	frames +=1 
-	var active = fighter.current_move_data["active"] - fighter.current_move_data["startup"]
-	if frames >= active :
-		machine.change_state("Attack_Recovery")
+		for area in get_overlapping_areas():
 
-func exit():
-	print("goes to recovery  AT:",
-		round(fighter.anim.current_animation_position * 60))
-	fighter.hitbox.disable_all_boxes()
+			if not area is Hurtbox:
+				continue
 
+			var hurtbox : Hurtbox = area
 
+			if !hurtbox.can_be_hit():
+				continue
 
-========================================
-FILE: /scripts/State Machine/States/Attack_Recovery.gd
-LINES: 31
-========================================
+			var enemy = hurtbox.fighter
 
-extends State
-var frames = 0
-func enter():
+			# IMPORTANT
+			if enemy == fighter:
+				continue
 
+			if enemy in fighter.hit_targets:
+				continue
 
-	fighter.hitbox.disable_all_boxes()
-	frames = 0
+			fighter.hit_targets.append(enemy)
 
-func physics_update(_delta):
-	frames +=1 
-	var recover = fighter.current_move_data["recovery"] - fighter.current_move_data["active"]
-	if frames >= recover :
-		if fighter.is_on_floor():
-			machine.change_state("Idle")
-		elif fighter.velocity.y>0 :
-			machine.change_state("Fall")
-		elif fighter.velocity.y<0:
-			machine.change_state("Jump")
-
-func end_move():
-	
-	print("ends AT:",
-	round(fighter.anim.current_animation_position * 60))
-func exit():
-	if fighter.is_on_floor():
-		fighter.air_dashable= true
-	fighter.movable = true
-	fighter.current_move = ""
-	fighter.hitbox.disable_all_boxes()
-	fighter.current_move_data = {}
-	fighter.movement_lock = false
+			emit_signal(
+				"hit_landed",
+				enemy,
+				fighter.current_move_data
+			)
+func enable_box(box_name):
+	disable_all_boxes()
+	get_node(box_name).disabled = false
+	get_node(box_name).visible = true
+func disable_all_boxes():
+	for c in get_children():
+		c.disabled = true
+		c.visible = false
 
 
 
 ========================================
-FILE: /scripts/State Machine/States/Attack_Startup.gd
-LINES: 23
-========================================
-
-extends State
-var frame = 0
-func enter():
-	frame = 0
-	if fighter.current_move_data == null:
-		push_error("Attack entered with NULL move data")
-		machine.change_state("Idle")
-		return
-	fighter.buffer.clear_buffer()
-
-	fighter.movement_lock = true
-	fighter.hit_active = false
-	fighter.hit_targets.clear()
-
-	fighter.anim.play(fighter.current_move_data["name"])
-func physics_update(_delta):
-	frame +=1 
-	var startup = fighter.current_move_data["startup"]
-	if frame >= startup :
-		machine.change_state("Attack_Active")
-func activate_hit():
-	print("ACTIVE AT:",
-		round(fighter.anim.current_animation_position * 60))
-
-
-
-========================================
-FILE: /scripts/State Machine/States/Back_dash.gd
-LINES: 21
-========================================
-
-extends State
-var timer = 0.5
-var dash_speed = 500
-var dir = 1
-func enter():
-	timer = 0.30
-	fighter.movement_lock = true
-	fighter.anim.play("Back_Dash")
-	if fighter.look_right:
-		dir = -1
-	else:
-		dir = 1
-func exit():
-	fighter.movement_lock = false
-func physics_update(delta):
-	
-	timer -= delta
-	fighter.velocity.x = dash_speed * dir
-	if timer <= 0:
-		machine.change_state("Idle")
-		return
-
-
-
-========================================
-FILE: /scripts/State Machine/States/Block.gd
-LINES: 25
-========================================
-
-extends State
-
-var timer = 0.0
-
-func enter():
-	fighter.anim.play("Block")
-	timer = fighter.blockstun_time / 60.0
-	fighter.movable = false
-	
-
-
-
-func physics_update(delta):
-	
-	timer -= delta
-
-	if timer <= 0:
-		fighter.movable = true
-
-		if fighter.is_on_floor():
-			machine.change_state("Idle")
-			return
-		else:
-			machine.change_state("Fall")
-			return
-
-
-
-========================================
-FILE: /scripts/State Machine/States/CROUCH_END.gd
-LINES: 24
-========================================
-
-extends State
-
-
-# Called when the node enters the scene tree for the first time.
-func enter():
-	fighter.anim.play("CrouchEnd")
-	fighter.jumpable= true
-	fighter.movable = true
-	
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func physics_update(_delta):
-	if !fighter.is_on_floor():
-		machine.change_state("Jump")
-		return
-
-	if !fighter.anim.is_playing():
-		if abs(fighter.velocity.x) > 0:
-			machine.change_state("Walk")
-			fighter.crouch_charged = false
-		else:
-			machine.change_state("Idle")
-			fighter.crouch_charged = false
-		return
-
-
-
-========================================
-FILE: /scripts/State Machine/States/CROUCH_HOLD.gd
-LINES: 23
-========================================
-
-extends State
-
-
-# Called when the node enters the scene tree for the first time.
-func enter():
-	fighter.anim.play("CrouchHold") # Replace with function body.
-	
-	fighter.jumpable = false
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func physics_update(_delta):
-	fighter.velocity.x = 0
-
-	if try_attack():
-		return
-	if !fighter.is_on_floor():
-		machine.change_state("Jump")
-		return
-
-	if !fighter.wants_crouch:
-		fighter.jumpable = true
-		machine.change_state("Crouch_End")
-		return
-
-
-
-========================================
-FILE: /scripts/State Machine/States/CROUCH_START.gd
-LINES: 22
-========================================
-
-extends State
-
-
-# Called when the node enters the scene tree for the first time.
-func enter():
-	fighter.anim.play("CrouchStart")
-	fighter.movable = false# Replace with function body.
-	fighter.jumpable = false
-	fighter.crouch_charged = true
-	
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func physics_update(_delta):
-	if !fighter.is_on_floor():
-		machine.change_state("Jump")
-		return
-
-	if !fighter.anim.is_playing():
-		if fighter.wants_crouch:
-			machine.change_state("Crouch_Hold")
-		else:
-			machine.change_state("Crouch_End")
-		return
-
-
-
-========================================
-FILE: /scripts/State Machine/States/Dash.gd
-LINES: 37
-========================================
-
-extends State
-var timer = 0.10
-var dash_speed = 900
-var dir = 1
-func enter():
-	timer = 0.10
-	fighter.anim.play("Dash")
-	fighter.movement_lock = true
-	if fighter.look_right:
-		dir = 1
-	else:
-		dir = -1
-	print(fighter.dashable, fighter.runnable)
-func physics_update(delta):
-	
-	timer -= delta
-	fighter.velocity.x = dash_speed * dir
-	if timer <= 0:
-		if try_attack():
-			return
-		if fighter.is_on_floor():
-			if fighter.wants_crouch :
-				machine.change_state("Crouch_Start")
-				return
-
-			if abs(fighter.velocity.x) > 0 and !fighter.runnable :
-				fighter.movement_lock = false
-				machine.change_state("Walk")
-				return
-			if fighter.runnable :
-				machine.change_state("Run")
-				return
-			
-			if fighter.velocity.x == 0 and !fighter.runnable :
-				fighter.movement_lock = false
-				machine.change_state("Idle")
-				return
-
-
-
-========================================
-FILE: /scripts/State Machine/States/FALL.gd
-LINES: 19
-========================================
-
-extends State
-
-func enter():
-	fighter.anim.play("Fall")
-	fighter.jumpable = false
-	fighter.velocity.y = 0
-
-func physics_update(_delta):
-	if try_attack():
-		return
-
-	if fighter.is_on_floor():
-		machine.change_state("Land")
-		fighter.air_dashable = true
-		return
-	if fighter.air_dashable and fighter.dashable:
-		machine.change_state("Air_dash")
-		fighter.air_dashable = false
-		return
-
-
-
-========================================
-FILE: /scripts/State Machine/States/HITSTUN.gd
-LINES: 24
-========================================
-
-extends State
-
-var timer = 0.0
-
-func enter():
-	fighter.anim.play("Punched")
-	timer = fighter.hitstun_time / 60.0
-	fighter.movable = false
-	fighter.movement_lock = true
-	
-
-
-
-func physics_update(delta):
-	
-	timer -= delta
-
-	if timer <= 0:
-		fighter.movable = true
-		fighter.movement_lock = false
-		if fighter.is_on_floor():
-			machine.change_state("Idle")
-		else:
-			machine.change_state("Fall")
-
-
-
-========================================
-FILE: /scripts/State Machine/States/IDLE.gd
-LINES: 28
-========================================
-
-extends State
-
-func enter():
-	fighter.anim.play("Idle")
-	fighter.movable = true
-	fighter.jumpable = true
-	
-func physics_update(_delta):
-	if try_attack():
-		return
-
-	if !fighter.is_on_floor() :
-		machine.change_state("Jump")
-		return
-
-	if fighter.wants_crouch:
-		machine.change_state("Crouch_Start")
-		return
-
-	if abs(fighter.velocity.x) > 0:
-		machine.change_state("Walk")
-		return
-	if fighter.dashable:
-		if fighter.back_dashable:
-			machine.change_state("Back_dash")
-		else:
-			machine.change_state("Dash")
-			return
-
-
-
-========================================
-FILE: /scripts/State Machine/States/JUMP.gd
+FILE: /scripts/fighter stuff/hurtbox.gd
 LINES: 16
 ========================================
 
-extends State
+extends Area2D
+class_name Hurtbox
+@onready var fighter : Fighter = get_parent()
 
-func enter():
-	fighter.anim.play("Jump")
-	
-func physics_update(_delta):
-	if try_attack():
-		return
+var vulnerable := true
+var invincible := false
 
-	if fighter.velocity.y > 0:
-		machine.change_state("Fall")
-		return
-	if fighter.air_dashable and fighter.dashable:
-		fighter.air_dashable = false
-		machine.change_state("Air_dash")
-		return
+func can_be_hit():
 
+	if !vulnerable:
+		return false
 
+	if invincible:
+		return false
 
-========================================
-FILE: /scripts/State Machine/States/Land.gd
-LINES: 15
-========================================
-
-extends State
-
-
-# Called when the node enters the scene tree for the first time.
-func enter():
-	fighter.anim.play("Landing") # Replace with function body.
-	fighter.movable = false
-	
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-
-
-
-func Landing():
-	machine.change_state("Idle")
+	return true
 
 
 
 ========================================
-FILE: /scripts/State Machine/States/Run.gd
-LINES: 35
-========================================
-
-extends State
-var timer = 3.0
-var dir = 1
-var run_speed = 400
-func enter():
-	timer = 1.0
-	fighter.anim.play("Run")
-	if fighter.look_right:
-		dir = 1
-	else:
-		dir = -1
-func exit():
-	fighter.movement_lock = false	
-func physics_update(delta):
-	timer -= delta
-	fighter.velocity.x = run_speed * dir
-	if timer<=0 or not fighter.runnable:
-		if try_attack():
-			return
-
-		if !fighter.is_on_floor() :
-			machine.change_state("Jump")
-			return
-
-		if fighter.wants_crouch:
-			machine.change_state("Crouch_Start")
-			return
-
-		if abs(fighter.velocity.x) > 0 and !fighter.dashable:
-			fighter.dashable = false
-			machine.change_state("Walk")
-			return
-		if fighter.velocity.x == 0 and !fighter.dashable:
-			machine.change_state("Idle")
-			return
-
-
-
-========================================
-FILE: /scripts/State Machine/States/WALK.gd
-LINES: 26
-========================================
-
-extends State
-
-func enter():
-	fighter.anim.play("Walk")
-	
-func physics_update(_delta):
-	if try_attack():
-		return
-
-	if !fighter.is_on_floor():
-		machine.change_state("Jump")
-		return
-
-	if fighter.wants_crouch:
-		machine.change_state("Crouch_Start")
-		return
-
-	if fighter.velocity.x == 0:
-		machine.change_state("Idle")
-		return
-	if fighter.dashable:
-		if fighter.back_dashable:
-			machine.change_state("Back_dash")
-		else:
-			machine.change_state("Dash")
-			return
-
-
-
-========================================
-FILE: /scripts/dummy_controller.gd
-LINES: 8
-========================================
-
-extends Node
-
-func control(body):
-	if body.state == body.State.HITSTUN:
-		return
-	body.velocity.x = 0
-	body.anim.flip_h = true
-	# does nothing / stands still
-
-
-
-========================================
-FILE: /scripts/game.gd
-LINES: 5
-========================================
-
-extends Node
-
-
-var playerHP = 10
-var Gold = 0
-
-
-
-========================================
-FILE: /scripts/input_buffer.gd
+FILE: /scripts/fighter stuff/input_buffer.gd
 LINES: 195
 ========================================
 
