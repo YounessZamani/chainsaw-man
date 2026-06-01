@@ -11,7 +11,7 @@ func enter():
 	fighter.buffer.clear_buffer()
 
 	fighter.movement_lock = true
-	fighter.hit_active = false
+	fighter.hitbox.disable_all_boxes()
 	fighter.hit_targets.clear()
 	fighter.anim.stop()
 	fighter.anim.play(fighter.current_move_data["name"])

@@ -1,12 +1,11 @@
 extends CharacterBody2D
 class_name Fighter
-
+# all fighter variable declaration
 var combo_hits = 0
 var runnable = false
 var blocking = false
 var movable = true
 var jumpable = true
-var hit_active = false
 var look_right = true
 var wants_crouch = false
 var crouch_charged = false
@@ -18,21 +17,21 @@ var air_dashable = false
 const SPEED = 250
 const JUMP_FORCE = -450
 var movement_lock = false
-
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
-
+		# move stuff
 var current_move = ""
 var current_move_data = {}
 var move_timer = 0
 var hit_targets = []
-
+var moves =[]
+			# time stuff
 var hitstun_time = 0
 var blockstun_time = 0
-var moves =[]
+
 var hitstop_time = 0
 
 
-
+#children references
 @onready var buffer = $InputBuffer
 @onready var Sprites = $sprites
 @onready var controller = $Controller
@@ -78,10 +77,41 @@ func _physics_process(delta):
 	move_and_slide()
 	resolve_pushbox()
 	update_hitbox_position()
-	
+
+
+
+					#	helper functions
 func set_crouch(value):
 	wants_crouch = value
+func frames(n):
+	return n / 60.0
+func get_anim_frames(anim_name):
+	var animframes = $AnimationPlayer.get_animation(anim_name)
+	return round(animframes.length * 60)
+func apply_hitstop(freeze):
+	hitstop_time = freeze/60
+func is_in_state(state_name):
+	return state_machine.current_state.name == state_name
+					#	move data stuff
+func load_moves():
 
+	var file = FileAccess.open("res://Moves.json", FileAccess.READ)
+
+	if file == null:
+		push_error("Failed to load moves.json")
+		return
+
+	var text = file.get_as_text()
+
+	var json = JSON.new()
+
+	var result = json.parse(text)
+
+	if result != OK:
+		push_error("JSON parse failed")
+		return
+
+	moves = json.data
 func get_move_from_input():
 
 	var grounded = is_on_floor()
@@ -97,6 +127,36 @@ func get_move_from_input():
 				return move["name"]
 
 	return ""
+func get_move_data_by_name(Name):
+
+	for move in moves:
+		if move["name"] == Name:
+			return move
+
+	return null
+func _on_hit_landed(enemy, move):
+	
+	apply_hitstop(move["freeze"])
+	
+	enemy.take_hit(move)
+func can_block(move):
+
+	if !blocking:
+		return false
+
+	match move["attack_type"]:
+
+		"overhead":
+			return !wants_crouch
+
+		"low":
+			return wants_crouch
+
+		"mid":
+			return true
+
+	return false
+
 
 func get_current_move_data():
 
@@ -105,8 +165,6 @@ func get_current_move_data():
 			return move
 
 	return null
-
-
 func take_hit(move):
 
 	var blocked = can_block(move)
@@ -138,13 +196,7 @@ func take_hit(move):
 		blockstun_time = move["stun"] / 2
 
 		state_machine.change_state("Block")
-
-# =========================
-# HIT DETECTION
-# =========================
-
-
-
+#							#side stuff basically opponent locating and updatign sides
 func updateside():
 	if not is_on_floor() and state_machine.current_state.name != "Fall":
 		return
@@ -164,47 +216,11 @@ func update_hitbox_position():
 	else:
 		hitbox.scale.x = -1
 		Sprites.flip_h = true
-
-func is_in_state(state_name):
-	return state_machine.current_state.name == state_name
-
 func find_opponent():
 
 	for f in get_tree().get_nodes_in_group("Fighters"):
 		if f != self:
 			opponent = f
-func get_move_data_by_name(Name):
-
-	for move in moves:
-		if move["name"] == Name:
-			return move
-
-	return null
-func frames(n):
-	return n / 60.0
-
-func load_moves():
-
-	var file = FileAccess.open("res://Moves.json", FileAccess.READ)
-
-	if file == null:
-		push_error("Failed to load moves.json")
-		return
-
-	var text = file.get_as_text()
-
-	var json = JSON.new()
-
-	var result = json.parse(text)
-
-	if result != OK:
-		push_error("JSON parse failed")
-		return
-
-	moves = json.data
-
-func apply_hitstop(freeze):
-	hitstop_time = freeze/60
 func resolve_pushbox():
 
 	if opponent == null:
@@ -226,28 +242,3 @@ func resolve_pushbox():
 			else:
 				global_position.x += push
 				opponent.global_position.x -= push
-func get_anim_frames(anim_name):
-	var animframes = $AnimationPlayer.get_animation(anim_name)
-	return round(animframes.length * 60)
-func _on_hit_landed(enemy, move):
-	
-	apply_hitstop(move["freeze"])
-
-	enemy.take_hit(move)
-func can_block(move):
-
-	if !blocking:
-		return false
-
-	match move["attack_type"]:
-
-		"overhead":
-			return !wants_crouch
-
-		"low":
-			return wants_crouch
-
-		"mid":
-			return true
-
-	return false

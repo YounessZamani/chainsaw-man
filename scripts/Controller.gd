@@ -1,8 +1,10 @@
 extends Node
 
 func control(body):
+	#hitstun case
 	if body.is_in_state("Hitstun"):
 		return
+	#all needed input declaration mostly coming from input buffer export variables
 	var _dir = body.buffer.get_direction()
 	var _last = body.buffer.prev_dir
 	var down = Input.is_action_pressed(body.buffer.down_action)
@@ -14,6 +16,8 @@ func control(body):
 	var dash = Input.is_action_just_pressed(body.buffer.dash_action)
 	var _forward = (right and body.look_right) or (left and not body.look_right)
 	var backward = (left and body.look_right) or (right and not body.look_right)
+	
+	#movement right and left and crouching, cant move while crouching
 	if body.wants_crouch and body.is_on_floor():
 		body.velocity.x = 0
 	elif body.is_on_floor() and not body.movable:
@@ -30,7 +34,7 @@ func control(body):
 		body.set_crouch(true)
 	else:
 		body.set_crouch(false)
-	
+	#jump logic if crouch befiore jump then jump is way better
 	if up and body.is_on_floor() and body.jumpable:
 		if body.crouch_charged:
 			body.velocity.y = 1.8 * body.JUMP_FORCE
@@ -38,10 +42,12 @@ func control(body):
 			body.velocity.y = 1.3* body.JUMP_FORCE
 		body.jumpable = false
 		body.crouch_charged = false
+	#block logic if holding opposite diorection than opponent u blocking
 	if (left and body.look_right)or (right and not body.look_right):
 		body.blocking = true
 	else:
 		body.blocking = false
+	#dash stuff fro dash, back dash and air dash
 	if dash and backward:
 		body.back_dashable = true
 		body.dashable = true

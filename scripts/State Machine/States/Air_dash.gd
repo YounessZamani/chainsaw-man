@@ -5,18 +5,24 @@ var dash_speed = 600
 var dir = 1
 
 func enter():
-
-	timer = 24
-
 	fighter.movement_lock = true
-
+	fighter.air_dashable = false
 	fighter.anim.play("Dash")
-
-	if fighter.look_right:
-		dir = 1
-	else:
-		dir = -1
 	fighter.velocity.y = 0
+
+	if !fighter.back_dashable:
+		timer = 24
+		if fighter.look_right:
+			dir = 1
+		else:
+			dir = -1
+	else:
+		timer = 12
+		if fighter.look_right:
+			dir = -1
+		else:
+			dir = 1
+
 func physics_update(_delta):
 
 	timer -= 1

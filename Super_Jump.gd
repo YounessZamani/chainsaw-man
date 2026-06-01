@@ -11,5 +11,6 @@ func physics_update(_delta):
 		machine.change_state("Fall")
 		return
 	if fighter.air_dashable and fighter.dashable:
+		fighter.air_dashable = false
 		machine.change_state("Air_dash")
 		return

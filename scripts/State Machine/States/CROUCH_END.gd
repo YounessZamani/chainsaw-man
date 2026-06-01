@@ -11,7 +11,7 @@ func enter():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func physics_update(_delta):
 	if !fighter.is_on_floor():
-		machine.change_state("Jump")
+		machine.change_state("Super_Jump")
 		return
 
 	if !fighter.anim.is_playing():

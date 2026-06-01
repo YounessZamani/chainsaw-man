@@ -14,7 +14,7 @@ func physics_update(_delta):
 	if try_attack():
 		return
 	if !fighter.is_on_floor():
-		machine.change_state("Jump")
+		machine.change_state("Super_Jump")
 		return
 
 	if !fighter.wants_crouch:

@@ -1,4 +1,4 @@
-[gd_scene load_steps=152 format=3 uid="uid://bu30alc0nw373"]
+[gd_scene load_steps=153 format=3 uid="uid://bu30alc0nw373"]
 
 [ext_resource type="Script" path="res://scripts/fighter stuff/Fighter.gd" id="1_51a1q"]
 [ext_resource type="Texture2D" uid="uid://b0xebpi0lp8mb" path="res://sprites/TheDummyAnim-SpriteSheet.png" id="2_2sde4"]
@@ -25,6 +25,7 @@
 [ext_resource type="Script" path="res://scripts/State Machine/States/Dash.gd" id="21_22n4e"]
 [ext_resource type="Script" path="res://scripts/State Machine/States/Air_dash.gd" id="22_kyjj2"]
 [ext_resource type="Script" path="res://scripts/State Machine/States/Back_dash.gd" id="23_h8acl"]
+[ext_resource type="Script" path="res://Super_Jump.gd" id="26_o2wwa"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_td1x0"]
 atlas = ExtResource("2_2sde4")
@@ -1628,6 +1629,9 @@ script = ExtResource("22_kyjj2")
 
 [node name="Back_dash" type="Node" parent="StateMachine"]
 script = ExtResource("23_h8acl")
+
+[node name="Super_Jump" type="Node" parent="StateMachine"]
+script = ExtResource("26_o2wwa")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 callback_mode_process = 0
