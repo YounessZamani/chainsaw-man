@@ -18,6 +18,8 @@ const SPEED = 250
 const JUMP_FORCE = -450
 var movement_lock = false
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
+var attack_connected = false
+var attack_blocked = false
 		# move stuff
 var current_move = ""
 var current_move_data = {}
@@ -29,7 +31,6 @@ var hitstun_time = 0
 var blockstun_time = 0
 
 var hitstop_time = 0
-
 
 #children references
 @onready var buffer = $InputBuffer
@@ -137,7 +138,11 @@ func get_move_data_by_name(Name):
 func _on_hit_landed(enemy, move):
 	
 	apply_hitstop(move["freeze"])
-	
+	var was_blocked = enemy.take_hit(move)
+	if !was_blocked:
+		attack_connected = true
+	else:
+		attack_blocked = true
 	enemy.take_hit(move)
 func can_block(move):
 
@@ -182,7 +187,6 @@ func take_hit(move):
 			velocity.x = -move["push"]
 
 		hitstun_time = move["stun"]
-
 		state_machine.change_state("Hitstun")
 
 	else:
@@ -194,8 +198,8 @@ func take_hit(move):
 			velocity.x = -move["push"] / 20
 
 		blockstun_time = move["stun"] / 2
-
 		state_machine.change_state("Block")
+	return blocked
 #							#side stuff basically opponent locating and updatign sides
 func updateside():
 	if not is_on_floor() and state_machine.current_state.name != "Fall":

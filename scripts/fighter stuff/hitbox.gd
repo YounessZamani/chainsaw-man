@@ -3,11 +3,10 @@ extends Area2D
 signal hit_landed(target, move_data)
 
 var fighter : Fighter
-var hit 
 func _ready():
 	fighter = get_parent()
 	disable_all_boxes()
-	hit = false
+
 func _physics_process(_delta):
 	check_hits()
 
@@ -37,7 +36,7 @@ func check_hits():
 				continue
 
 			fighter.hit_targets.append(enemy)
-			hit = true
+
 			emit_signal(
 				"hit_landed",
 				enemy,

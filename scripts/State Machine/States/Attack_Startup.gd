@@ -9,7 +9,8 @@ func enter():
 		machine.change_state("Idle")
 		return
 	fighter.buffer.clear_buffer()
-
+	fighter.attack_connected = false
+	fighter.attack_blocked = false
 	fighter.movement_lock = true
 	fighter.hitbox.disable_all_boxes()
 	fighter.hit_targets.clear()

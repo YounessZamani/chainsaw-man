@@ -62,12 +62,12 @@
 	"freeze": 6,
 	"type": "medium",
 	"cancel":{
-		"on_hit": true,
-		"on_block": false,
+		"on_hit": false,
+		"on_block": true,
 		"on_whiff": false,
 		"start_window":3,
 		"end_window": 10,
-		"cancel_into" : []
+		"cancel_into" : ["medium","heavy","special"]
 	}
 }
 

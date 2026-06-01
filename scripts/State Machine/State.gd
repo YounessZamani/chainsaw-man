@@ -41,13 +41,26 @@ func try_cancel():
 
 	if next_move == null:
 		return false
+	var cancel = fighter.current_move_data.get("cancel", {})
+	var allowed_by_state = false
 
+	if fighter.attack_connected and cancel["on_hit"]:
+		allowed_by_state = true
+	elif fighter.attack_blocked and cancel["on_block"]:
+		allowed_by_state = true
+	elif !fighter.attack_connected and !fighter.attack_blocked and cancel["on_whiff"]:
+		allowed_by_state = true
+
+	if !allowed_by_state:
+		return false
 	if !can_cancel_into(next_move):
 		return false
 
 	fighter.current_move = move
 	fighter.current_move_data = next_move
 	print("attack has been canceled")
+	print("hit:", fighter.attack_connected,
+	  "block:", fighter.attack_blocked)
 	machine.change_state("Attack_Startup")
 
 	return true
