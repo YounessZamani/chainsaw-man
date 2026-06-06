@@ -29,3 +29,5 @@ func exit():
 	fighter.hitbox.disable_all_boxes()
 	fighter.current_move_data = {}
 	fighter.movement_lock = false
+	fighter.Sprites.scale.x = 1
+	fighter.Sprites.scale.y = 1

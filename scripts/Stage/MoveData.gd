@@ -1,6 +1,5 @@
 extends GridContainer
 
-
 @onready var Damage = $"Damage value"
 @onready var Combo_Damage = $"Combo damage value"
 @onready var Max_Damage = $"Max combo damage value"
@@ -15,8 +14,9 @@ var dmg := 0
 var combo := 0
 var max_combo := 0
 var startup := 0
-var advantage := 0.00
-var last_combo_hits =0
+var advantage := 0
+
+var last_combo_hits := 0
 var last_health := 100
 
 
@@ -51,7 +51,11 @@ func update_labels():
 	Combo_Damage.text = str(combo)
 	Max_Damage.text = str(max_combo)
 	Startup.text = str(startup)
-	Advantage.text = str(advantage)
+
+	if advantage > 0:
+		Advantage.text = "+" + str(advantage)
+	else:
+		Advantage.text = str(advantage)
 
 
 func update_damage():
@@ -59,10 +63,10 @@ func update_damage():
 	var current_health = opp.health
 
 	if current_health < last_health:
-
 		dmg = last_health - current_health
 
 	last_health = current_health
+
 
 func update_combo():
 
@@ -76,43 +80,45 @@ func update_combo():
 			max_combo = combo
 
 	# combo ended
-	if !opp.is_in_state("Hitstun"):
+	if opp.combo_hits == 0 and last_combo_hits > 0:
 
-		opp.combo_hits = 0
-		last_combo_hits = 0
 		combo = 0
+		last_combo_hits = 0
+
 
 func update_startup():
 
-	if fighter.current_move_data == null:
+	if fighter.current_move_data.is_empty():
+		startup = 0
 		return
 
-	var move_data = fighter.current_move_data
+	startup = fighter.startup_frame
 
-	if move_data.has("startup"):
-		startup = move_data["startup"]
 
 func update_advantage():
 
 	if fighter.current_move_data.is_empty():
+		advantage = 0
 		return
 
-	var move_data = fighter.current_move_data
+	var move = fighter.current_move_data
 
-	if !move_data.has("recovery"):
+	if !move.has("stun"):
+		advantage = 0
 		return
 
-	var recovery = move_data["recovery"]- move_data["active"]
-	# assuming hitstun_time/blockstun_time are stored in FRAMES
+	var recovery_frames = move["recovery"] - move["active"]
+	var active_frames = move["active"] -move["startup"]
+	var active_left = active_frames - fighter.hit_frame
+	var total_recovery = recovery_frames + active_left
+	if fighter.attack_connected:
 
-	if opp.is_in_state("Hitstun"):
+		advantage = move["stun"] - total_recovery
 
-		advantage = round(opp.hitstun_time/60.00- recovery)
+	elif fighter.attack_blocked:
 
-	elif opp.is_in_state("Block"):
-
-		advantage = round(opp.blockstun_time/60.00 - recovery)
+		advantage = int(move["stun"] / 2) - total_recovery
 
 	else:
 
-		advantage = 0
+		advantage = -1* total_recovery

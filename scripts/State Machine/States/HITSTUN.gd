@@ -10,9 +10,8 @@ func enter():
 	fighter.current_move = ""
 	fighter.current_move_data = {}
 	fighter.hitbox.disable_all_boxes()
-	
-
-
+	fighter.Sprites.scale.x = 1
+	fighter.Sprites.scale.y = 1
 
 func physics_update(_delta):
 	
@@ -21,9 +20,9 @@ func physics_update(_delta):
 	if timer <= 0:
 		fighter.movable = true
 		fighter.movement_lock = false
+		fighter.combo_hits = 0
 		if fighter.is_on_floor():
 			machine.change_state("Idle")
 		else:
 			machine.change_state("Fall")
 
-	

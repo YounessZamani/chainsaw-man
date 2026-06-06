@@ -137,12 +137,12 @@ func check_combo(pattern):
 		if i == pattern[p]:
 			p += 1
 			if p >= pattern.size():
-				clear_buffer()
-				last_dir = "5"
 				return true
 
 	return false
-
+func consume_combo():
+	clear_buffer()
+	last_dir = "5"
 func clear_buffer():
 	input_buffer.clear()
 	time_buffer.clear()

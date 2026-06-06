@@ -1,8 +1,9 @@
-[gd_scene load_steps=153 format=3 uid="uid://bu30alc0nw373"]
+[gd_scene load_steps=162 format=3 uid="uid://bu30alc0nw373"]
 
 [ext_resource type="Script" path="res://scripts/fighter stuff/Fighter.gd" id="1_51a1q"]
 [ext_resource type="Texture2D" uid="uid://b0xebpi0lp8mb" path="res://sprites/TheDummyAnim-SpriteSheet.png" id="2_2sde4"]
 [ext_resource type="Texture2D" uid="uid://dh3fur0yif4a5" path="res://sprites/Harpy Fighter/Harpy Fighter/Sprite Sheets/Sheet235B.png" id="3_r6mar"]
+[ext_resource type="Texture2D" uid="uid://1sd7gu0o5k8t" path="res://sprites/IceBoy_First9_anim/Spritesheets/AirSpin Attack.png" id="3_svdmr"]
 [ext_resource type="Script" path="res://scripts/fighter stuff/input_buffer.gd" id="3_vhkdf"]
 [ext_resource type="Script" path="res://scripts/fighter stuff/hitbox.gd" id="5_rsbvv"]
 [ext_resource type="Script" path="res://scripts/Controller.gd" id="5_sknr6"]
@@ -390,6 +391,34 @@ region = Rect2(448, 384, 64, 64)
 [sub_resource type="AtlasTexture" id="AtlasTexture_aa1wj"]
 atlas = ExtResource("2_2sde4")
 region = Rect2(512, 384, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_udl4v"]
+atlas = ExtResource("3_svdmr")
+region = Rect2(100, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wv2y6"]
+atlas = ExtResource("3_svdmr")
+region = Rect2(200, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uj1c6"]
+atlas = ExtResource("3_svdmr")
+region = Rect2(300, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hswpg"]
+atlas = ExtResource("3_svdmr")
+region = Rect2(400, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dbf2a"]
+atlas = ExtResource("3_svdmr")
+region = Rect2(500, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vu2sg"]
+atlas = ExtResource("3_svdmr")
+region = Rect2(600, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xodcm"]
+atlas = ExtResource("3_svdmr")
+region = Rect2(700, 0, 100, 100)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7e7ke"]
 atlas = ExtResource("3_r6mar")
@@ -791,6 +820,32 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_udl4v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wv2y6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uj1c6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hswpg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dbf2a")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vu2sg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xodcm")
+}],
+"loop": false,
+"name": &"spin",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_7e7ke")
 }, {
 "duration": 1.0,
@@ -1072,7 +1127,8 @@ tracks/1/keys = {
 
 [sub_resource type="Animation" id="Animation_lvks4"]
 resource_name = "Jab"
-length = 0.35
+length = 0.4
+step = 0.05
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -1092,10 +1148,52 @@ tracks/1/path = NodePath("sprites:frame")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"times": PackedFloat32Array(0, 0.1, 0.25, 0.35),
 "transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 1,
 "values": [0, 1, 2, 3]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("StateMachine/Attack_Startup")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.25),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"activate_hit"
+}]
+}
+tracks/3/type = "method"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("StateMachine/Attack_Active")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0.35),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"recover"
+}]
+}
+tracks/4/type = "method"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("StateMachine/Attack_Recovery")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0.4),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"end_move"
+}]
 }
 
 [sub_resource type="Animation" id="Animation_orxdc"]
@@ -1394,6 +1492,99 @@ tracks/4/keys = {
 }]
 }
 
+[sub_resource type="Animation" id="Animation_qpu6u"]
+resource_name = "spin"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("sprites:animation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [&"spin"]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("sprites:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5, 6]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = false
+tracks/2/path = NodePath("sprites:flip_h")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.911049),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("sprites:scale")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/4/type = "method"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("StateMachine/Attack_Startup")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0.298025),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"activate_hit"
+}]
+}
+tracks/5/type = "method"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("StateMachine/Attack_Active")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0.704009),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"recover"
+}]
+}
+tracks/6/type = "method"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("StateMachine/Attack_Recovery")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0.935891),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"end_move"
+}]
+}
+
 [sub_resource type="Animation" id="Animation_4a75y"]
 resource_name = "test"
 tracks/0/type = "value"
@@ -1439,10 +1630,10 @@ tracks/3/path = NodePath("sprites:scale")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(0, 0.9, 0.93),
-"transitions": PackedFloat32Array(1, 1, 1),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector2(0.05, 0.05), Vector2(0.05, 0.05), Vector2(1, 1)]
+"values": [Vector2(0.05, 0.05)]
 }
 tracks/4/type = "method"
 tracks/4/imported = false
@@ -1505,6 +1696,7 @@ _data = {
 "Run": SubResource("Animation_h6hej"),
 "Walk": SubResource("Animation_glsdy"),
 "low": SubResource("Animation_bnhh5"),
+"spin": SubResource("Animation_qpu6u"),
 "test": SubResource("Animation_4a75y")
 }
 

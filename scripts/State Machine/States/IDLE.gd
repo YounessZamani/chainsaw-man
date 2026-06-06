@@ -4,7 +4,6 @@ func enter():
 	fighter.anim.play("Idle")
 	fighter.movable = true
 	fighter.jumpable = true
-	
 func physics_update(_delta):
 	if try_attack():
 		return

@@ -8,7 +8,7 @@ func enter():
 
 func physics_update(_delta):
 	frames += 1
-
+	fighter.active_frame +=1
 	var cancel_data = fighter.current_move_data.get("cancel", {})
 
 	if !cancel_data.is_empty():
@@ -25,6 +25,8 @@ func physics_update(_delta):
 			machine.change_state("Attack_Recovery")
 
 func exit():
-	print("goes to recovery  AT:",
-		round(fighter.anim.current_animation_position * 60))
+
 	fighter.hitbox.disable_all_boxes()
+func recover():
+		print("goes to recovery  AT:",
+		round(fighter.anim.current_animation_position * 60))

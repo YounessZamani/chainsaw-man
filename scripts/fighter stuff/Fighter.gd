@@ -15,11 +15,14 @@ var dashable = false
 var back_dashable = false
 var air_dashable = false
 const SPEED = 250
-const JUMP_FORCE = -450
+const JUMP_FORCE = -700
 var movement_lock = false
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 var attack_connected = false
 var attack_blocked = false
+var active_frame = 0
+var hit_frame = 0
+var startup_frame = 0
 		# move stuff
 var current_move = ""
 var current_move_data = {}
@@ -122,9 +125,11 @@ func get_move_from_input():
 		if buffer.check_combo(move["input"]):
 
 			if grounded and move["ground_ok"]:
+				buffer.consume_combo()
 				return move["name"]
 
 			if !grounded and move["air_ok"]:
+				buffer.consume_combo()
 				return move["name"]
 
 	return ""
@@ -136,14 +141,13 @@ func get_move_data_by_name(Name):
 
 	return null
 func _on_hit_landed(enemy, move):
-	
+	hit_frame = active_frame
 	apply_hitstop(move["freeze"])
 	var was_blocked = enemy.take_hit(move)
 	if !was_blocked:
 		attack_connected = true
 	else:
 		attack_blocked = true
-	enemy.take_hit(move)
 func can_block(move):
 
 	if !blocking:
@@ -176,17 +180,16 @@ func take_hit(move):
 
 	apply_hitstop(move["freeze"])
 
-	combo_hits += 1
-
 	if !blocked:
 		health -= move["damage"]
-
+		combo_hits +=1
 		if !look_right:
 			velocity.x = move["push"]
 		else:
 			velocity.x = -move["push"]
 
 		hitstun_time = move["stun"]
+		
 		state_machine.change_state("Hitstun")
 
 	else:

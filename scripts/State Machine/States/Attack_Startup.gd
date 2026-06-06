@@ -16,8 +16,12 @@ func enter():
 	fighter.hit_targets.clear()
 	fighter.anim.stop()
 	fighter.anim.play(fighter.current_move_data["name"])
+	fighter.active_frame = 0
+	fighter.hit_frame = 0
+	fighter.startup_frame = 0
 func physics_update(_delta):
 	frame +=1 
+	fighter.startup_frame +=1 
 	var startup = fighter.current_move_data["startup"]
 	if frame >= startup :
 		machine.change_state("Attack_Active")

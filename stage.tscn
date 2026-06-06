@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://cijk6msgax5px"]
+[gd_scene load_steps=10 format=3 uid="uid://cijk6msgax5px"]
 
 [ext_resource type="Texture2D" uid="uid://8tq3am6ynxpy" path="res://bg.jpg" id="1_naslf"]
 [ext_resource type="PackedScene" uid="uid://bu30alc0nw373" path="res://Fighter.tscn" id="2_dqjcw"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://scripts/Stage/Match Manager.gd" id="3_j88f5"]
 [ext_resource type="Script" path="res://scripts/Stage/InputHistory.gd" id="5_ie6hc"]
 [ext_resource type="Script" path="res://scripts/Stage/MoveData.gd" id="6_l4l0f"]
+[ext_resource type="Script" path="res://Combo_counter.gd" id="7_spe3b"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_l7h3e"]
 size = Vector2(1144.5, 20)
@@ -136,6 +137,15 @@ offset_bottom = 532.0
 scroll_active = false
 tab_size = 8
 script = ExtResource("5_ie6hc")
+fighter = NodePath("../../../player")
+
+[node name="combo counter" type="Label" parent="Ui layers/Player1" node_paths=PackedStringArray("fighter")]
+offset_left = 130.0
+offset_top = 261.0
+offset_right = 207.0
+offset_bottom = 284.0
+scale = Vector2(1.23339, 3.7125)
+script = ExtResource("7_spe3b")
 fighter = NodePath("../../../player")
 
 [node name="Player2" type="Node2D" parent="Ui layers"]
