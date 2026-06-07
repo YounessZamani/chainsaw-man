@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://cijk6msgax5px"]
+[gd_scene load_steps=12 format=3 uid="uid://cijk6msgax5px"]
 
 [ext_resource type="Texture2D" uid="uid://8tq3am6ynxpy" path="res://bg.jpg" id="1_naslf"]
 [ext_resource type="PackedScene" uid="uid://bu30alc0nw373" path="res://Fighter.tscn" id="2_dqjcw"]
@@ -6,7 +6,9 @@
 [ext_resource type="Script" path="res://scripts/Stage/Match Manager.gd" id="3_j88f5"]
 [ext_resource type="Script" path="res://scripts/Stage/InputHistory.gd" id="5_ie6hc"]
 [ext_resource type="Script" path="res://scripts/Stage/MoveData.gd" id="6_l4l0f"]
-[ext_resource type="Script" path="res://Combo_counter.gd" id="7_spe3b"]
+[ext_resource type="Script" path="res://scripts/Stage/Combo_counter.gd" id="7_spe3b"]
+[ext_resource type="AudioStream" uid="uid://phwqn4tfkwsj" path="res://米津玄師「IRIS OUT」(Instrumental).mp3" id="8_p2uok"]
+[ext_resource type="Script" path="res://scripts/Stage/Music.gd" id="9_krrv3"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_l7h3e"]
 size = Vector2(1144.5, 20)
@@ -47,6 +49,7 @@ down_action = "p2_down"
 dash_action = "p2_dash"
 punch_action = "p2_H"
 kick_action = "p2_L"
+throw_action = "p2_throw"
 
 [node name="CollisionShape2D" parent="fighter/hurtbox" index="0"]
 position = Vector2(0.599998, -0.900002)
@@ -89,6 +92,7 @@ offset_left = 727.0
 offset_top = 63.0
 offset_right = 889.0
 offset_bottom = 194.0
+rotation = -0.0194951
 scale = Vector2(1.13838, 1.15499)
 columns = 2
 script = ExtResource("6_l4l0f")
@@ -113,6 +117,13 @@ layout_mode = 2
 text = "max combo damage"
 
 [node name="Max combo damage value" type="Label" parent="Ui layers/Player1/Move Data p1"]
+layout_mode = 2
+
+[node name="total action" type="Label" parent="Ui layers/Player1/Move Data p1"]
+layout_mode = 2
+text = "total action"
+
+[node name="total action value" type="Label" parent="Ui layers/Player1/Move Data p1"]
 layout_mode = 2
 
 [node name="Attack Startup" type="Label" parent="Ui layers/Player1/Move Data p1"]
@@ -191,6 +202,13 @@ text = "max combo damage"
 [node name="Max combo damage value" type="Label" parent="Ui layers/Player2/Move Data p2"]
 layout_mode = 2
 
+[node name="total action" type="Label" parent="Ui layers/Player2/Move Data p2"]
+layout_mode = 2
+text = "total action"
+
+[node name="total action value" type="Label" parent="Ui layers/Player2/Move Data p2"]
+layout_mode = 2
+
 [node name="Attack Startup" type="Label" parent="Ui layers/Player2/Move Data p2"]
 layout_mode = 2
 text = "Attack Startup"
@@ -232,6 +250,11 @@ metadata/_edit_lock_ = true
 [node name="right wall" type="CollisionShape2D" parent="walls and floor"]
 position = Vector2(1104, 186)
 shape = SubResource("RectangleShape2D_cj764")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("8_p2uok")
+volume_db = -39.807
+script = ExtResource("9_krrv3")
 
 [connection signal="pressed" from="Ui layers/restart button" to="Match Manager" method="_on_restart_button_pressed"]
 

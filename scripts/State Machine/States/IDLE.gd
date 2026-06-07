@@ -4,6 +4,7 @@ func enter():
 	fighter.anim.play("Idle")
 	fighter.movable = true
 	fighter.jumpable = true
+	fighter.can_act = true
 func physics_update(_delta):
 	if try_attack():
 		return
@@ -25,4 +26,6 @@ func physics_update(_delta):
 		else:
 			machine.change_state("Dash")
 			return
-	
+func exit():
+	fighter.action_frame = 0
+	fighter.startup_frame =0

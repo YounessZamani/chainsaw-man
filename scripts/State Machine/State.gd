@@ -15,12 +15,19 @@ func physics_update(_delta):
 
 func try_attack():
 
-	var move = fighter.get_move_from_input()
+	var move_name = fighter.get_move_from_input()
 
-	if move != "":
-		fighter.current_move = move
-		fighter.current_move_data = fighter.get_move_data_by_name(move)
-		machine.change_state("Attack_Startup")
+	if move_name != "":
+		fighter.current_move = move_name
+
+		var move_data = fighter.get_move_data_by_name(move_name)
+		fighter.current_move_data = move_data
+
+		if move_data["attack_type"] == "throw":
+			machine.change_state("Throw_Startup")
+		else:
+			machine.change_state("Attack_Startup")
+
 		return true
 
 	return false

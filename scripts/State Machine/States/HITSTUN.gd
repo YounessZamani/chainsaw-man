@@ -12,6 +12,8 @@ func enter():
 	fighter.hitbox.disable_all_boxes()
 	fighter.Sprites.scale.x = 1
 	fighter.Sprites.scale.y = 1
+	fighter.can_act = false
+	fighter.grabable = false
 
 func physics_update(_delta):
 	
@@ -26,3 +28,6 @@ func physics_update(_delta):
 		else:
 			machine.change_state("Fall")
 
+func exit():
+	fighter.can_act = true
+	fighter.grabable = true

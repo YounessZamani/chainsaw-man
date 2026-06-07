@@ -1,11 +1,7 @@
 extends State
 var frames = 0
 func enter():
-
-
-	fighter.hitbox.disable_all_boxes()
 	frames = 0
-
 func physics_update(_delta):
 	frames +=1 
 	fighter.action_frame +=1 

@@ -9,6 +9,7 @@ func enter():
 func physics_update(_delta):
 	frames += 1
 	fighter.active_frame +=1
+	fighter.action_frame +=1 
 	var cancel_data = fighter.current_move_data.get("cancel", {})
 
 	if !cancel_data.is_empty():

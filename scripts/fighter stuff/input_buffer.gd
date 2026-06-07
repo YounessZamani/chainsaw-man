@@ -11,6 +11,7 @@ extends Node
 @export var dash_action = "p1_dash"
 @export var punch_action = "p1_H"
 @export var kick_action  = "p1_L"
+@export var throw_action = "p1_throw"
 
 # =========================
 # SETTINGS
@@ -98,6 +99,9 @@ func check_buttons():
 	if Input.is_action_just_pressed(kick_action):
 		add_input("L")
 		add_button_to_last_input("L")
+	if Input.is_action_just_pressed(throw_action):
+		add_input("T")
+		add_button_to_last_input("T")
 
 # =========================
 # BUFFER LOGIC

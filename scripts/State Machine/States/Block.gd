@@ -6,7 +6,7 @@ func enter():
 	fighter.anim.play("Block")
 	timer = fighter.blockstun_time 
 	fighter.movable = false
-	
+	fighter.grabable = false
 	fighter.current_move = ""
 	fighter.current_move_data = {}
 	fighter.hitbox.disable_all_boxes()
@@ -25,3 +25,5 @@ func physics_update(_delta):
 		else:
 			machine.change_state("Fall")
 			return
+func exit():
+	fighter.grabable = true

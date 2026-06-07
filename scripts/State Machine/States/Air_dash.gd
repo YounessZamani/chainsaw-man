@@ -37,3 +37,4 @@ func physics_update(_delta):
 		machine.change_state("Fall")
 func exit():
 	fighter.movement_lock = false
+	fighter.velocity.x = dir* 320

@@ -1,34 +1,42 @@
 extends CharacterBody2D
 class_name Fighter
 # all fighter variable declaration
-var combo_hits = 0
+		#able variable, fighter is able to do blank
+
 var runnable = false
 var blocking = false
 var movable = true
 var jumpable = true
+var dashable = false
+var back_dashable = false
+var air_dashable = false
 var look_right = true
 var wants_crouch = false
 var crouch_charged = false
 var health = 100
 var opponent = null
-var dashable = false
-var back_dashable = false
-var air_dashable = false
+var grabable = true
+
 const SPEED = 250
 const JUMP_FORCE = -700
 var movement_lock = false
+var can_act = true
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
-var attack_connected = false
-var attack_blocked = false
+
+		# move data things
 var active_frame = 0
 var hit_frame = 0
 var startup_frame = 0
+var action_frame = 0
+var combo_hits = 0
 		# move stuff
 var current_move = ""
 var current_move_data = {}
 var move_timer = 0
 var hit_targets = []
 var moves =[]
+var attack_connected = false
+var attack_blocked = false
 			# time stuff
 var hitstun_time = 0
 var blockstun_time = 0
@@ -142,6 +150,7 @@ func get_move_data_by_name(Name):
 	return null
 func _on_hit_landed(enemy, move):
 	hit_frame = active_frame
+	print(hit_frame)
 	apply_hitstop(move["freeze"])
 	var was_blocked = enemy.take_hit(move)
 	if !was_blocked:
@@ -249,3 +258,9 @@ func resolve_pushbox():
 			else:
 				global_position.x += push
 				opponent.global_position.x -= push
+#-------------------- grab method attempts
+func is_in_grab_range():
+	if abs(opponent.position.x -position.x )< 100:
+		return true
+	else:
+		return false
