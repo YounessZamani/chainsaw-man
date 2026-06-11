@@ -7,6 +7,7 @@ func enter():
 	fighter.hurtbox.invincible =true # Replace with function body.
 	frames = 50
 	fighter.anim.play("Knockdown")
+	fighter.movable= false
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func physics_update(_delta):

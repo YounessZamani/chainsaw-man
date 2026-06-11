@@ -6,12 +6,12 @@ func enter():
 	fighter.anim.play("Tech") # Replace with function body.
 
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func physics_update(_delta):
-	_on_animation_player_animation_finished("Tech")
+# Called every frame. 'delta' is the elapsed time since the previous fram
 func exit():
 	fighter.grabable = true
 	fighter.hurtbox.invincible = false
 
 func _on_animation_player_animation_finished(_anim_name):
+	if machine.current_state != self:
+		return
 	machine.change_state("Idle") # Replace with function body.

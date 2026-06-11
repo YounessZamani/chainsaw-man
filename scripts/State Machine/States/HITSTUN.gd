@@ -23,6 +23,7 @@ func physics_update(_delta):
 		fighter.movable = true
 		fighter.movement_lock = false
 		fighter.combo_hits = 0
+		fighter.scaling = 100
 		if fighter.is_on_floor():
 			machine.change_state("Idle")
 		else:

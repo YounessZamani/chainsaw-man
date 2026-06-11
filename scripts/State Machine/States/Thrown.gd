@@ -7,9 +7,10 @@ func enter():
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func physics_update(_delta):
-	_on_animation_player_animation_finished("Thrown")
 
 
 func _on_animation_player_animation_finished(_anim_name):
+	if machine.current_state != self:
+		return
+
 	machine.change_state("Knockdown") # Replace with function body.

@@ -18,9 +18,11 @@ func physics_update(delta):
 		current_state.physics_update(delta)
 
 func change_state(Name):
+	var old_state = "None"
 	if current_state:
+		old_state = current_state.name
 		current_state.exit()
-	print("state is : ", Name)
+	print(fighter.name, ": ", old_state, " -> ", Name)
 	current_state = get_node(Name)
 	current_state.enter()
 	

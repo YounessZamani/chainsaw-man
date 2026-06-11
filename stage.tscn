@@ -25,23 +25,23 @@ scale = Vector2(3.07754, 4.78148)
 texture = ExtResource("1_naslf")
 metadata/_edit_lock_ = true
 
-[node name="player" parent="." groups=["Fighters"] instance=ExtResource("2_dqjcw")]
+[node name="player 1" parent="." groups=["Fighters"] instance=ExtResource("2_dqjcw")]
 position = Vector2(318, 443)
 scale = Vector2(5.261, 4)
 metadata/_edit_group_ = true
 
-[node name="CollisionShape2D" parent="player/hurtbox" index="0"]
+[node name="CollisionShape2D" parent="player 1/hurtbox" index="0"]
 position = Vector2(0, -2.55)
 
-[node name="fighter" parent="." groups=["Fighters"] instance=ExtResource("2_dqjcw")]
+[node name="player 2" parent="." groups=["Fighters"] instance=ExtResource("2_dqjcw")]
 position = Vector2(849, 411)
 scale = Vector2(4, 4)
 
-[node name="sprites" parent="fighter" index="0"]
+[node name="sprites" parent="player 2" index="0"]
 position = Vector2(2.15007, -6.74992)
 scale = Vector2(1.14219, 1.05157)
 
-[node name="InputBuffer" parent="fighter" index="1"]
+[node name="InputBuffer" parent="player 2" index="1"]
 left_action = "p2_left"
 right_action = "p2_right"
 up_action = "p2_up"
@@ -51,7 +51,7 @@ punch_action = "p2_H"
 kick_action = "p2_L"
 throw_action = "p2_throw"
 
-[node name="CollisionShape2D" parent="fighter/hurtbox" index="0"]
+[node name="CollisionShape2D" parent="player 2/hurtbox" index="0"]
 position = Vector2(0.599998, -0.900002)
 
 [node name="Match Manager" type="Node" parent="."]
@@ -83,9 +83,10 @@ offset_left = 543.0
 offset_top = 5.0
 offset_right = 1043.0
 offset_bottom = 32.0
+max_value = 300.0
 show_percentage = false
 script = ExtResource("3_ghhrj")
-fighter = NodePath("../../../fighter")
+fighter = NodePath("../../../player 2")
 
 [node name="Move Data p1" type="GridContainer" parent="Ui layers/Player1" node_paths=PackedStringArray("fighter")]
 offset_left = 727.0
@@ -96,7 +97,7 @@ rotation = -0.0194951
 scale = Vector2(1.13838, 1.15499)
 columns = 2
 script = ExtResource("6_l4l0f")
-fighter = NodePath("../../../fighter")
+fighter = NodePath("../../../player 2")
 
 [node name="Damage" type="Label" parent="Ui layers/Player1/Move Data p1"]
 layout_mode = 2
@@ -148,16 +149,16 @@ offset_bottom = 532.0
 scroll_active = false
 tab_size = 8
 script = ExtResource("5_ie6hc")
-fighter = NodePath("../../../player")
+fighter = NodePath("../../../player 1")
 
 [node name="combo counter" type="Label" parent="Ui layers/Player1" node_paths=PackedStringArray("fighter")]
-offset_left = 130.0
-offset_top = 261.0
-offset_right = 207.0
-offset_bottom = 284.0
+offset_left = 931.0
+offset_top = 231.0
+offset_right = 1008.0
+offset_bottom = 254.0
 scale = Vector2(1.23339, 3.7125)
 script = ExtResource("7_spe3b")
-fighter = NodePath("../../../player")
+fighter = NodePath("../../../player 1")
 
 [node name="Player2" type="Node2D" parent="Ui layers"]
 
@@ -166,10 +167,11 @@ offset_left = 49.0
 offset_top = 3.0
 offset_right = 444.0
 offset_bottom = 30.0
+max_value = 300.0
 fill_mode = 1
 show_percentage = false
 script = ExtResource("3_ghhrj")
-fighter = NodePath("../../../player")
+fighter = NodePath("../../../player 1")
 
 [node name="Move Data p2" type="GridContainer" parent="Ui layers/Player2" node_paths=PackedStringArray("fighter")]
 offset_left = 146.0
@@ -179,7 +181,7 @@ offset_bottom = 196.0
 scale = Vector2(0.96752, 1.19222)
 columns = 2
 script = ExtResource("6_l4l0f")
-fighter = NodePath("../../../player")
+fighter = NodePath("../../../player 1")
 
 [node name="Damage" type="Label" parent="Ui layers/Player2/Move Data p2"]
 layout_mode = 2
@@ -231,7 +233,16 @@ offset_bottom = 537.0
 scroll_active = false
 tab_size = 8
 script = ExtResource("5_ie6hc")
-fighter = NodePath("../../../fighter")
+fighter = NodePath("../../../player 2")
+
+[node name="combo counter" type="Label" parent="Ui layers/Player2" node_paths=PackedStringArray("fighter")]
+offset_left = 139.0
+offset_top = 285.0
+offset_right = 216.0
+offset_bottom = 308.0
+scale = Vector2(1.23339, 3.7125)
+script = ExtResource("7_spe3b")
+fighter = NodePath("../../../player 2")
 
 [node name="walls and floor" type="StaticBody2D" parent="."]
 position = Vector2(4, 71)
@@ -258,5 +269,5 @@ script = ExtResource("9_krrv3")
 
 [connection signal="pressed" from="Ui layers/restart button" to="Match Manager" method="_on_restart_button_pressed"]
 
-[editable path="player"]
-[editable path="fighter"]
+[editable path="player 1"]
+[editable path="player 2"]

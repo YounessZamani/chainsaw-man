@@ -13,7 +13,7 @@ var air_dashable = false
 var look_right = true
 var wants_crouch = false
 var crouch_charged = false
-var health = 100
+var health = 300
 var opponent = null
 var grabable = true
 
@@ -29,6 +29,8 @@ var hit_frame = 0
 var startup_frame = 0
 var action_frame = 0
 var combo_hits = 0
+var scaling = 100
+var scale_reduc
 		# move stuff
 var current_move = ""
 var current_move_data = {}
@@ -184,33 +186,15 @@ func get_current_move_data():
 
 	return null
 func take_hit(move):
-
 	var blocked = can_block(move)
-
 	apply_hitstop(move["freeze"])
-
 	if !blocked:
-		health -= move["damage"]
-		combo_hits +=1
-		if !look_right:
-			velocity.x = move["push"]
+		if is_in_state("Attack_Startup"):
+			apply_counter(move)
 		else:
-			velocity.x = -move["push"]
-
-		hitstun_time = move["stun"]
-		
-		state_machine.change_state("Hitstun")
-
+			apply_hit(move)
 	else:
-		health -= move["damage"] / 100
-
-		if !look_right:
-			velocity.x = move["push"] / 20
-		else:
-			velocity.x = -move["push"] / 20
-
-		blockstun_time = move["stun"] / 2
-		state_machine.change_state("Block")
+		apply_block(move)
 	return blocked
 #							#side stuff basically opponent locating and updatign sides
 func updateside():
@@ -264,3 +248,44 @@ func is_in_grab_range():
 		return true
 	else:
 		return false
+func apply_hit(move):
+	health -= move["damage"]*scaling/100
+	scale_reduc = combo_hits *10
+	combo_hits +=1
+	scaling -= scale_reduc
+	print("scaling reduction is : ",scale_reduc," and total scaling is :", scaling )
+	if !look_right:
+		velocity.x = move["push"]
+	else:
+		velocity.x = -move["push"]
+
+	hitstun_time = move["stun"]
+	
+	state_machine.change_state("Hitstun")
+
+func apply_block(move):
+		health -= move["damage"] / 100
+
+		if !look_right:
+			velocity.x = move["push"] / 20
+		else:
+			velocity.x = -move["push"] / 20
+
+		blockstun_time = move["stun"] / 2
+		state_machine.change_state("Block")
+func apply_counter(move):
+	var counter = 1.5
+	health -= counter *move["damage"]*scaling/100
+	scale_reduc = combo_hits *10
+	combo_hits +=1
+	scaling -= scale_reduc
+	print( "COOOOOOOOOOUNTER")
+	print("scaling reduction is : ",scale_reduc," and total scaling is :", scaling )
+	if !look_right:
+		velocity.x = counter * move["push"]
+	else:
+		velocity.x = -counter *move["push"]
+
+	hitstun_time = counter * move["stun"]
+	
+	state_machine.change_state("Hitstun")
