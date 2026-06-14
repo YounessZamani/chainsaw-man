@@ -5,7 +5,7 @@ func enter():
 func physics_update(_delta):
 	frames +=1 
 	fighter.action_frame +=1 
-	var recover = fighter.current_move_data["recovery"] - fighter.current_move_data["active"]
+	var recover = fighter.current_move_data["recovery"] 
 	if frames >= recover :
 		if fighter.is_on_floor():
 			machine.change_state("Idle")

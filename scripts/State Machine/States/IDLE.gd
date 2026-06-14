@@ -5,6 +5,7 @@ func enter():
 	fighter.movable = true
 	fighter.jumpable = true
 	fighter.can_act = true
+	fighter.anim.speed_scale = 1
 func physics_update(_delta):
 	if try_attack():
 		return

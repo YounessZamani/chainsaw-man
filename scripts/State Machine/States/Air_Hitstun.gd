@@ -15,6 +15,7 @@ func enter():
 	fighter.can_act = false
 	fighter.grabable = false
 	fighter.gravity = ProjectSettings.get_setting("physics/2d/default_gravity")* 0.5
+	fighter.anim.speed_scale = 1
 func physics_update(_delta):
 	
 	timer -= 1
@@ -28,7 +29,7 @@ func physics_update(_delta):
 			machine.change_state("Knockdown")
 		else:
 			machine.change_state("Fall")
-
+	
 func exit():
 	fighter.can_act = true
 	fighter.grabable = true

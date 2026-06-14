@@ -21,6 +21,7 @@ func enter():
 	fighter.hit_frame = 0
 	fighter.startup_frame = 0
 	fighter.action_frame = 0
+	fighter.fit_animation_to_frames(fighter.current_move_data)
 func physics_update(_delta):
 	frame +=1 
 	fighter.startup_frame +=1 

@@ -14,6 +14,7 @@ func enter():
 	fighter.Sprites.scale.y = 1
 	fighter.can_act = false
 	fighter.grabable = false
+	fighter.anim.speed_scale = 1
 
 func physics_update(_delta):
 	

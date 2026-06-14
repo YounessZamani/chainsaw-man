@@ -23,13 +23,13 @@ func enter():
 	fighter.hit_frame = 0
 	fighter.startup_frame = 0
 	fighter.action_frame = 0 # Replace with function body.
-
+	fighter.fit_animation_to_frames(fighter.current_move_data)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func physics_update(_delta):
 	frame +=1 
 	fighter.startup_frame +=1 
-	fighter.action_frame +=1 
+	fighter.action_frame +=1
 	var startup = fighter.current_move_data["startup"]
 	if frame >= startup :
 		machine.change_state("Throw_Active")

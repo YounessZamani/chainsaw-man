@@ -11,7 +11,7 @@ func physics_update(_delta):
 	frames += 1
 	fighter.active_frame +=1
 	fighter.action_frame +=1 
-	var active = fighter.current_move_data["active"] - fighter.current_move_data["startup"]
+	var active = fighter.current_move_data["active"]
 	if fighter.is_in_grab_range() and fighter.opponent.grabable:
 		machine.change_state("Throw_Success")
 		return

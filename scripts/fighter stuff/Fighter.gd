@@ -294,3 +294,9 @@ func apply_counter(move):
 	hitstun_time = counter * move["stun"]
 	
 	state_machine.change_state("Hitstun")
+func fit_animation_to_frames(move_data):
+	var anim_frames = get_anim_frames(move_data["name"])
+	var data_frames = move_data["startup"]+ move_data["active"]+ move_data["recovery"]
+
+
+	anim.speed_scale = float(anim_frames) / float(data_frames)

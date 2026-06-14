@@ -21,7 +21,7 @@ func physics_update(_delta):
 
 			if try_cancel():
 				return
-		var active = fighter.current_move_data["active"] - fighter.current_move_data["startup"]
+		var active = fighter.current_move_data["active"]
 		if frames >= active :
 			machine.change_state("Attack_Recovery")
 
