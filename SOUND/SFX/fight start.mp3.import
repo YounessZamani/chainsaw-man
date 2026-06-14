@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://c7gw2a0x8utvs"
+path="res://.godot/imported/fight start.mp3-c060184d7d6132c6cd8a8eb2541b5fd4.mp3str"
+
+[deps]
+
+source_file="res://SOUND/SFX/fight start.mp3"
+dest_files=["res://.godot/imported/fight start.mp3-c060184d7d6132c6cd8a8eb2541b5fd4.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

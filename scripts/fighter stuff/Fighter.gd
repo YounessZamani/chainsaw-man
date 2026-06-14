@@ -13,9 +13,10 @@ var air_dashable = false
 var look_right = true
 var wants_crouch = false
 var crouch_charged = false
-var health = 300
+var health = 200
 var opponent = null
 var grabable = true
+var countered = false
 
 const SPEED = 250
 const JUMP_FORCE = -700
@@ -258,11 +259,14 @@ func apply_hit(move):
 		velocity.x = move["push"]
 	else:
 		velocity.x = -move["push"]
-
+	var launch = move.get("launch", null)
+	if launch != null:
+		velocity.y = launch
 	hitstun_time = move["stun"]
-	
-	state_machine.change_state("Hitstun")
-
+	if is_on_floor():
+		state_machine.change_state("Hitstun")
+	else:
+		state_machine.change_state("Air_Hitstun")
 func apply_block(move):
 		health -= move["damage"] / 100
 
@@ -280,6 +284,7 @@ func apply_counter(move):
 	combo_hits +=1
 	scaling -= scale_reduc
 	print( "COOOOOOOOOOUNTER")
+	countered = true
 	print("scaling reduction is : ",scale_reduc," and total scaling is :", scaling )
 	if !look_right:
 		velocity.x = counter * move["push"]

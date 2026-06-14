@@ -3,7 +3,6 @@ extends State
 func enter():
 	fighter.anim.play("Fall")
 	fighter.jumpable = false
-	fighter.velocity.y = 0
 	fighter.movement_lock = true
 
 func physics_update(_delta):

@@ -4,6 +4,9 @@ extends Node
 @onready var p2 =$"../player 2"
 @onready var win = $"../Ui layers/WIN text"
 @onready var butt =$"../Ui layers/restart button"
+@onready var audio = $"../AudioStreamPlayer"
+const  COUNTER =preload("res://SOUND/SFX/counter.mp3")
+const  START = preload("res://SOUND/SFX/fight start.mp3")
 var p1_initial_health 
 var p2_initial_health 
 var p1_initial_position
@@ -17,6 +20,7 @@ func _ready():
 	p2_initial_position = p2.position
 	butt.visible = false 
 	butt.disabled = true
+	play_sound(START)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
@@ -30,6 +34,7 @@ func _process(_delta):
 		win.text = "Player 1 wins"
 		show_butt()
 		game_over = true
+	update_counter()
 func reset_health():
 	p1.health = p1_initial_health
 	p2.health = p2_initial_health
@@ -54,3 +59,18 @@ func show_butt():
 func hide_butt():
 	butt.disabled = true
 	butt.visible = false
+func play_sound(audio_stream: AudioStream):
+	var player = AudioStreamPlayer.new()
+	add_child(player)
+	player.stream = audio_stream
+	player.play()
+	
+	# Clean up the node when the sound finishes playing
+	await player.finished
+	player.queue_free()
+func update_counter():
+	if p1.countered or p2.countered :
+		play_sound(COUNTER)
+		p1.countered= false
+		p2.countered= false
+

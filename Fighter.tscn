@@ -1,9 +1,10 @@
-[gd_scene load_steps=211 format=3 uid="uid://bu30alc0nw373"]
+[gd_scene load_steps=229 format=3 uid="uid://bu30alc0nw373"]
 
 [ext_resource type="Script" path="res://scripts/fighter stuff/Fighter.gd" id="1_51a1q"]
 [ext_resource type="Texture2D" uid="uid://b0xebpi0lp8mb" path="res://sprites/TheDummyAnim-SpriteSheet.png" id="2_2sde4"]
 [ext_resource type="Texture2D" uid="uid://dh3fur0yif4a5" path="res://sprites/Harpy Fighter/Harpy Fighter/Sprite Sheets/Sheet235B.png" id="3_r6mar"]
 [ext_resource type="Texture2D" uid="uid://1sd7gu0o5k8t" path="res://sprites/IceBoy_First9_anim/Spritesheets/AirSpin Attack.png" id="3_svdmr"]
+[ext_resource type="Texture2D" uid="uid://bhbo42r640ew1" path="res://sprites/Harpy Fighter/Harpy Fighter/Sprite Sheets/Sheet262C.png" id="3_uwtmi"]
 [ext_resource type="Script" path="res://scripts/fighter stuff/input_buffer.gd" id="3_vhkdf"]
 [ext_resource type="Script" path="res://scripts/fighter stuff/hitbox.gd" id="5_rsbvv"]
 [ext_resource type="Script" path="res://scripts/Controller.gd" id="5_sknr6"]
@@ -34,6 +35,7 @@
 [ext_resource type="Script" path="res://scripts/State Machine/States/Knockdown.gd" id="32_fm1am"]
 [ext_resource type="Script" path="res://scripts/State Machine/States/Thrown.gd" id="32_kxfr3"]
 [ext_resource type="Script" path="res://scripts/State Machine/States/Tech.gd" id="33_y2m60"]
+[ext_resource type="Script" path="res://scripts/State Machine/States/Air_Hitstun.gd" id="35_r1p2a"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_td1x0"]
 atlas = ExtResource("2_2sde4")
@@ -246,6 +248,66 @@ region = Rect2(64, 512, 64, 64)
 [sub_resource type="AtlasTexture" id="AtlasTexture_umwxj"]
 atlas = ExtResource("2_2sde4")
 region = Rect2(0, 512, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5y1ee"]
+atlas = ExtResource("3_uwtmi")
+region = Rect2(0, 0, 1080, 1190)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a51v1"]
+atlas = ExtResource("3_uwtmi")
+region = Rect2(1080, 0, 1080, 1190)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xe8lw"]
+atlas = ExtResource("3_uwtmi")
+region = Rect2(2160, 0, 1080, 1190)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uv71c"]
+atlas = ExtResource("3_uwtmi")
+region = Rect2(3240, 0, 1080, 1190)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_btrbn"]
+atlas = ExtResource("3_uwtmi")
+region = Rect2(0, 1190, 1080, 1190)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qibg3"]
+atlas = ExtResource("3_uwtmi")
+region = Rect2(1080, 1190, 1080, 1190)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xt7p7"]
+atlas = ExtResource("3_uwtmi")
+region = Rect2(2160, 1190, 1080, 1190)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bscxs"]
+atlas = ExtResource("3_uwtmi")
+region = Rect2(3240, 1190, 1080, 1190)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rwpql"]
+atlas = ExtResource("3_uwtmi")
+region = Rect2(0, 2380, 1080, 1190)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_iakl5"]
+atlas = ExtResource("3_uwtmi")
+region = Rect2(1080, 2380, 1080, 1190)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7uxrm"]
+atlas = ExtResource("3_uwtmi")
+region = Rect2(2160, 2380, 1080, 1190)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x6043"]
+atlas = ExtResource("3_uwtmi")
+region = Rect2(3240, 2380, 1080, 1190)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7nbgp"]
+atlas = ExtResource("3_uwtmi")
+region = Rect2(0, 3570, 1080, 1190)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sf6yo"]
+atlas = ExtResource("3_uwtmi")
+region = Rect2(1080, 3570, 1080, 1190)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qbi7d"]
+atlas = ExtResource("3_uwtmi")
+region = Rect2(2160, 3570, 1080, 1190)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_706lp"]
 atlas = ExtResource("2_2sde4")
@@ -830,6 +892,56 @@ animations = [{
 "loop": false,
 "name": &"Landing",
 "speed": 26.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5y1ee")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a51v1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xe8lw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uv71c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_btrbn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qibg3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xt7p7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bscxs")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rwpql")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_iakl5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7uxrm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x6043")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7nbgp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sf6yo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qbi7d")
+}],
+"loop": true,
+"name": &"Launch",
+"speed": 5.0
 }, {
 "frames": [{
 "duration": 2.0,
@@ -2314,7 +2426,101 @@ tracks/6/path = NodePath("StateMachine/Attack_Recovery")
 tracks/6/interp = 1
 tracks/6/loop_wrap = true
 tracks/6/keys = {
-"times": PackedFloat32Array(0.935891),
+"times": PackedFloat32Array(1),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"end_move"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_yeiqj"]
+resource_name = "Launch"
+length = 1.42
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("sprites:animation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [&"Launch"]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("sprites:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("sprites:flip_h")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 1.4),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("sprites:scale")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0.05, 0.05)]
+}
+tracks/4/type = "method"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("StateMachine/Attack_Startup")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0.8),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"activate_hit"
+}]
+}
+tracks/5/type = "method"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("StateMachine/Attack_Active")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(1.1),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"recover"
+}]
+}
+tracks/6/type = "method"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("StateMachine/Attack_Recovery")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(1.4),
 "transitions": PackedFloat32Array(1),
 "values": [{
 "args": [],
@@ -2336,6 +2542,7 @@ _data = {
 "Jump": SubResource("Animation_orxdc"),
 "Knockdown": SubResource("Animation_kkspi"),
 "Landing": SubResource("Animation_am6p8"),
+"Launch": SubResource("Animation_yeiqj"),
 "Punch": SubResource("Animation_a0bw6"),
 "Punched": SubResource("Animation_wkec0"),
 "RESET": SubResource("Animation_1k21k"),
@@ -2359,8 +2566,9 @@ script = ExtResource("1_51a1q")
 
 [node name="sprites" type="AnimatedSprite2D" parent="."]
 position = Vector2(-1.85934, -8.81049)
+scale = Vector2(0.05, 0.05)
 sprite_frames = SubResource("SpriteFrames_8v265")
-animation = &"Thrown"
+animation = &"test"
 autoplay = "Idle"
 frame = 5
 
@@ -2496,6 +2704,9 @@ script = ExtResource("33_y2m60")
 
 [node name="Knockdown" type="Node" parent="StateMachine"]
 script = ExtResource("32_fm1am")
+
+[node name="Air_Hitstun" type="Node" parent="StateMachine"]
+script = ExtResource("35_r1p2a")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 callback_mode_process = 0

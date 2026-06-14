@@ -1,9 +1,9 @@
 extends State
 var timer = 6
-var dash_speed = 900
+var dash_speed = 1000
 var dir = 1
 func enter():
-	timer = 6
+	timer = 10
 	fighter.anim.play("Dash")
 	fighter.movement_lock = true
 	if fighter.look_right:
@@ -11,6 +11,7 @@ func enter():
 	else:
 		dir = -1
 	print(fighter.dashable, fighter.runnable)
+	fighter.jumpable = false
 func physics_update(_delta):
 	
 	timer -= 1
@@ -35,5 +36,6 @@ func physics_update(_delta):
 				fighter.movement_lock = false
 				machine.change_state("Idle")
 				return
+func exit():
+	fighter.jumpable = true
 
-		

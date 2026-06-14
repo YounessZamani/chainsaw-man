@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://phwqn4tfkwsj"
+path="res://.godot/imported/米津玄師「IRIS OUT」(Instrumental).mp3-b63751ed2c826cd3bc62a43b02e95b0b.mp3str"
+
+[deps]
+
+source_file="res://SOUND/Music/米津玄師「IRIS OUT」(Instrumental).mp3"
+dest_files=["res://.godot/imported/米津玄師「IRIS OUT」(Instrumental).mp3-b63751ed2c826cd3bc62a43b02e95b0b.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

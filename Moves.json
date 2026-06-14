@@ -25,7 +25,7 @@
 },
 {
 	"name":"low",
-	"input":["2","H"],
+	"input":["2","L"],
 	"startup":12,
 	"active":24,
 	"recovery":32,
@@ -46,7 +46,33 @@
 		"end_window": 12,
 		"cancel_into" : ["medium","heavy","special"]
 	}
-},{
+},
+	{
+	"name":"Launch",
+	"input":["2","H"],
+	"startup":15,
+	"active":21,
+	"recovery":72,
+	"damage":20,
+	"push":35,
+	"stun":22,
+	"box_type":"mid",
+	"attack_type":"heavy",
+	"ground_ok":true,
+	"air_ok":false,
+	"freeze": 3,
+	"type": "light",
+	"cancel":{
+		"on_hit": false,
+		"on_block": false,
+		"on_whiff": false,
+		"start_window":2,
+		"end_window": 5,
+		"cancel_into" : []
+	}
+}
+,
+{
 	"name":"Punch",
 	"input":["H"],
 	"startup":18,
@@ -78,8 +104,9 @@
 	"active":21,
 	"recovery":24,
 	"damage":2,
+	"launch":-100,
 	"push":35,
-	"stun":22,
+	"stun":30,
 	"box_type":"air",
 	"attack_type":"mid",
 	"ground_ok":false,
@@ -125,7 +152,7 @@
 	"startup":15,
 	"active":21,
 	"recovery":24,
-	"damage":2,
+	"damage":20,
 	"push":35,
 	"stun":22,
 	"box_type":"mid",

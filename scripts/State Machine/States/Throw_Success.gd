@@ -6,6 +6,8 @@ func enter():
 	fighter.anim.play("Throw_Success") # Replace with function body.
 	fighter.opponent.state_machine.change_state("Thrown")
 	frames = 30
+	var dmg = fighter.current_move_data["damage"]
+	fighter.opponent.health -= dmg
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func physics_update(_delta):
 	frames -= 1
