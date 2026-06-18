@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://bmvg7pvvylvar"
+path="res://.godot/imported/Hazbin Hotel _ 8-Bit Vox Populi (Lucifers Part) by Sam Haft and Andrew Underberg.mp3-28550ea25703c09e07c5d91f7cd5e8f7.mp3str"
+
+[deps]
+
+source_file="res://SOUND/Music/Hazbin Hotel _ 8-Bit Vox Populi (Lucifers Part) by Sam Haft and Andrew Underberg.mp3"
+dest_files=["res://.godot/imported/Hazbin Hotel _ 8-Bit Vox Populi (Lucifers Part) by Sam Haft and Andrew Underberg.mp3-28550ea25703c09e07c5d91f7cd5e8f7.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

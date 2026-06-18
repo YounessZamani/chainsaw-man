@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://cijk6msgax5px"]
+[gd_scene load_steps=13 format=3 uid="uid://cijk6msgax5px"]
 
 [ext_resource type="Texture2D" uid="uid://8tq3am6ynxpy" path="res://bg.jpg" id="1_naslf"]
 [ext_resource type="PackedScene" uid="uid://bu30alc0nw373" path="res://Fighter.tscn" id="2_dqjcw"]
@@ -9,6 +9,7 @@
 [ext_resource type="Script" path="res://scripts/Stage/Combo_counter.gd" id="7_spe3b"]
 [ext_resource type="AudioStream" uid="uid://phwqn4tfkwsj" path="res://SOUND/Music/米津玄師「IRIS OUT」(Instrumental).mp3" id="8_p2uok"]
 [ext_resource type="Script" path="res://scripts/Stage/Music.gd" id="9_ba6je"]
+[ext_resource type="PackedScene" uid="uid://v486oiwiovn6" path="res://pause.tscn" id="10_3pj2v"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_l7h3e"]
 size = Vector2(1144.5, 20)
@@ -264,6 +265,14 @@ shape = SubResource("RectangleShape2D_cj764")
 stream = ExtResource("8_p2uok")
 volume_db = -39.807
 script = ExtResource("9_ba6je")
+
+[node name="Pause" parent="." instance=ExtResource("10_3pj2v")]
+visible = false
+offset_left = 271.0
+offset_top = 77.0
+offset_right = 311.0
+offset_bottom = 117.0
+scale = Vector2(1.77121, 1.80696)
 
 [connection signal="pressed" from="Ui layers/restart button" to="Match Manager" method="_on_restart_button_pressed"]
 

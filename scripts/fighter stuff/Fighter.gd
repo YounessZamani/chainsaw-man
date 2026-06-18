@@ -110,7 +110,7 @@ func is_in_state(state_name):
 					#	move data stuff
 func load_moves():
 
-	var file = FileAccess.open("res://Moves.json", FileAccess.READ)
+	var file = FileAccess.open("res://JSON DATA/Moves.json", FileAccess.READ)
 
 	if file == null:
 		push_error("Failed to load moves.json")
@@ -262,11 +262,11 @@ func apply_hit(move):
 	var launch = move.get("launch", null)
 	if launch != null:
 		velocity.y = launch
-	hitstun_time = move["stun"]
-	if is_on_floor():
-		state_machine.change_state("Hitstun")
-	else:
+		gravity *= 1.1*combo_hits
 		state_machine.change_state("Air_Hitstun")
+	else:
+		state_machine.change_state("Hitstun")
+	hitstun_time = move["stun"]
 func apply_block(move):
 		health -= move["damage"] / 100
 

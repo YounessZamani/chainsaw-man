@@ -1,10 +1,8 @@
 extends State
 
 var timer = 0
-
 func enter():
 	fighter.anim.play("Punched")
-	timer = fighter.hitstun_time 
 	fighter.movable = false
 	fighter.movement_lock = true
 	fighter.current_move = ""
@@ -14,23 +12,23 @@ func enter():
 	fighter.Sprites.scale.y = 1
 	fighter.can_act = false
 	fighter.grabable = false
+	timer = 0
 	fighter.gravity = ProjectSettings.get_setting("physics/2d/default_gravity")* 0.5
 	fighter.anim.speed_scale = 1
 func physics_update(_delta):
-	
-	timer -= 1
-
-	if timer <= 0:
-		fighter.movable = true
-		fighter.movement_lock = false
+	timer +=1
+	if timer < 3:
+		return
+	if fighter.is_on_floor():
 		fighter.combo_hits = 0
-		fighter.scaling = 100
-		if fighter.is_on_floor():
-			machine.change_state("Knockdown")
+		if timer <40:
+			machine.change_state("Idle")
 		else:
-			machine.change_state("Fall")
+			machine.change_state("Knockdown")
+
 	
 func exit():
 	fighter.can_act = true
 	fighter.grabable = true
 	fighter.gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
+	
