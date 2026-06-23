@@ -8,12 +8,12 @@ func enter():
 	fighter.current_move = ""
 	fighter.current_move_data = {}
 	fighter.hitbox.disable_all_boxes()
-	fighter.Sprites.scale.x = 1
-	fighter.Sprites.scale.y = 1
+	fighter.Sprites.scale = Vector2.ONE * fighter.default_size
 	fighter.can_act = false
 	fighter.grabable = false
 	timer = 0
-	fighter.gravity = ProjectSettings.get_setting("physics/2d/default_gravity")* 0.5
+	if fighter.combo_hits > 1:
+		fighter.gravity = ProjectSettings.get_setting("physics/2d/default_gravity")* fighter.combo_hits *0.3
 	fighter.anim.speed_scale = 1
 func physics_update(_delta):
 	timer +=1

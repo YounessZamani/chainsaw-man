@@ -8,6 +8,7 @@ func enter():
 	frames = 50
 	fighter.anim.play("Knockdown")
 	fighter.movable= false
+	fighter.scaling = 100
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func physics_update(_delta):

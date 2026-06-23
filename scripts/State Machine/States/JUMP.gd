@@ -3,6 +3,7 @@ extends State
 func enter():
 	fighter.anim.play("Jump")
 	fighter.movement_lock = true
+	fighter.no_switch = true
 func physics_update(_delta):
 	if try_attack():
 		return

@@ -6,6 +6,8 @@ func enter():
 	fighter.jumpable = true
 	fighter.can_act = true
 	fighter.anim.speed_scale = 1
+	fighter.Sprites.scale = Vector2.ONE * fighter.default_size
+	fighter.no_switch = false
 func physics_update(_delta):
 	if try_attack():
 		return

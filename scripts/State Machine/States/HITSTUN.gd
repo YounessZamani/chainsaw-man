@@ -10,8 +10,7 @@ func enter():
 	fighter.current_move = ""
 	fighter.current_move_data = {}
 	fighter.hitbox.disable_all_boxes()
-	fighter.Sprites.scale.x = 1
-	fighter.Sprites.scale.y = 1
+	fighter.Sprites.scale = Vector2.ONE * fighter.default_size
 	fighter.can_act = false
 	fighter.grabable = false
 	fighter.anim.speed_scale = 1

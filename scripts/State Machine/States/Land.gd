@@ -7,7 +7,8 @@ func enter():
 	fighter.movable = false
 	fighter.movement_lock = false
 	fighter.air_dashable = true
-	
+	fighter.anim.speed_scale = 2
+	fighter.no_switch = false
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 

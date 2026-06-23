@@ -1,7 +1,7 @@
-[gd_scene load_steps=13 format=3 uid="uid://cijk6msgax5px"]
+[gd_scene load_steps=20 format=3 uid="uid://cijk6msgax5px"]
 
 [ext_resource type="Texture2D" uid="uid://8tq3am6ynxpy" path="res://bg.jpg" id="1_naslf"]
-[ext_resource type="PackedScene" uid="uid://bu30alc0nw373" path="res://Fighter.tscn" id="2_dqjcw"]
+[ext_resource type="PackedScene" uid="uid://bu30alc0nw373" path="res://Fighters/Fighter.tscn" id="2_dqjcw"]
 [ext_resource type="Script" path="res://scripts/Stage/Health_Bar.gd" id="3_ghhrj"]
 [ext_resource type="Script" path="res://scripts/Stage/Match Manager.gd" id="3_j88f5"]
 [ext_resource type="Script" path="res://scripts/Stage/InputHistory.gd" id="5_ie6hc"]
@@ -10,12 +10,32 @@
 [ext_resource type="AudioStream" uid="uid://phwqn4tfkwsj" path="res://SOUND/Music/米津玄師「IRIS OUT」(Instrumental).mp3" id="8_p2uok"]
 [ext_resource type="Script" path="res://scripts/Stage/Music.gd" id="9_ba6je"]
 [ext_resource type="PackedScene" uid="uid://v486oiwiovn6" path="res://pause.tscn" id="10_3pj2v"]
+[ext_resource type="PackedScene" uid="uid://c0m517n5tevs" path="res://Fighters/Sol badguy.tscn" id="11_2klwl"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_l7h3e"]
 size = Vector2(1144.5, 20)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_cj764"]
 size = Vector2(31.5, 633)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hslmm"]
+size = Vector2(68.9456, 30.5263)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ra40v"]
+size = Vector2(44.2756, 46.8722)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_mt4pd"]
+size = Vector2(79.43, 36.5579)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_msjkh"]
+size = Vector2(99.9814, 62.7675)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_51o5i"]
+size = Vector2(76.3, 181.053)
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_xvmwr"]
+radius = 43.0
+height = 200.0
 
 [node name="Stage" type="Node2D"]
 position = Vector2(34, 46)
@@ -27,33 +47,12 @@ texture = ExtResource("1_naslf")
 metadata/_edit_lock_ = true
 
 [node name="player 1" parent="." groups=["Fighters"] instance=ExtResource("2_dqjcw")]
-position = Vector2(318, 443)
-scale = Vector2(5.261, 4)
+position = Vector2(222, 475)
+scale = Vector2(4, 3.041)
 metadata/_edit_group_ = true
 
 [node name="CollisionShape2D" parent="player 1/hurtbox" index="0"]
-position = Vector2(0, -2.55)
-
-[node name="player 2" parent="." groups=["Fighters"] instance=ExtResource("2_dqjcw")]
-position = Vector2(849, 411)
-scale = Vector2(4, 4)
-
-[node name="sprites" parent="player 2" index="0"]
-position = Vector2(2.15007, -6.74992)
-scale = Vector2(1.14219, 1.05157)
-
-[node name="InputBuffer" parent="player 2" index="1"]
-left_action = "p2_left"
-right_action = "p2_right"
-up_action = "p2_up"
-down_action = "p2_down"
-dash_action = "p2_dash"
-punch_action = "p2_H"
-kick_action = "p2_L"
-throw_action = "p2_throw"
-
-[node name="CollisionShape2D" parent="player 2/hurtbox" index="0"]
-position = Vector2(0.599998, -0.900002)
+position = Vector2(0.675003, 1.58727)
 
 [node name="Match Manager" type="Node" parent="."]
 script = ExtResource("3_j88f5")
@@ -86,7 +85,7 @@ offset_right = 1043.0
 offset_bottom = 32.0
 show_percentage = false
 script = ExtResource("3_ghhrj")
-fighter = NodePath("../../../player 2")
+fighter = NodePath("../../../player 1")
 
 [node name="Move Data p1" type="GridContainer" parent="Ui layers/Player1" node_paths=PackedStringArray("fighter")]
 offset_left = 727.0
@@ -97,7 +96,7 @@ rotation = -0.0194951
 scale = Vector2(1.13838, 1.15499)
 columns = 2
 script = ExtResource("6_l4l0f")
-fighter = NodePath("../../../player 2")
+fighter = NodePath("../../../player 1")
 
 [node name="Damage" type="Label" parent="Ui layers/Player1/Move Data p1"]
 layout_mode = 2
@@ -170,7 +169,7 @@ offset_bottom = 30.0
 fill_mode = 1
 show_percentage = false
 script = ExtResource("3_ghhrj")
-fighter = NodePath("../../../player 1")
+fighter = NodePath("../../../Sol Badguy")
 
 [node name="Move Data p2" type="GridContainer" parent="Ui layers/Player2" node_paths=PackedStringArray("fighter")]
 offset_left = 146.0
@@ -180,7 +179,7 @@ offset_bottom = 196.0
 scale = Vector2(0.96752, 1.19222)
 columns = 2
 script = ExtResource("6_l4l0f")
-fighter = NodePath("../../../player 1")
+fighter = NodePath("../../../Sol Badguy")
 
 [node name="Damage" type="Label" parent="Ui layers/Player2/Move Data p2"]
 layout_mode = 2
@@ -232,7 +231,7 @@ offset_bottom = 537.0
 scroll_active = false
 tab_size = 8
 script = ExtResource("5_ie6hc")
-fighter = NodePath("../../../player 2")
+fighter = NodePath("../../../Sol Badguy")
 
 [node name="combo counter" type="Label" parent="Ui layers/Player2" node_paths=PackedStringArray("fighter")]
 offset_left = 139.0
@@ -241,7 +240,7 @@ offset_right = 216.0
 offset_bottom = 308.0
 scale = Vector2(1.23339, 3.7125)
 script = ExtResource("7_spe3b")
-fighter = NodePath("../../../player 2")
+fighter = NodePath("../../../Sol Badguy")
 
 [node name="walls and floor" type="StaticBody2D" parent="."]
 position = Vector2(4, 71)
@@ -274,7 +273,48 @@ offset_right = 311.0
 offset_bottom = 117.0
 scale = Vector2(1.77121, 1.80696)
 
+[node name="Sol Badguy" parent="." groups=["Fighters"] instance=ExtResource("11_2klwl")]
+position = Vector2(779, 459)
+scale = Vector2(1, 0.95)
+default_size = 3
+
+[node name="sprites" parent="Sol Badguy" index="0"]
+position = Vector2(-1.71661e-05, -1.3113e-05)
+scale = Vector2(3, 3)
+
+[node name="InputBuffer" parent="Sol Badguy" index="1"]
+left_action = "p2_left"
+right_action = "p2_right"
+up_action = "p2_up"
+down_action = "p2_down"
+dash_action = "p2_dash"
+punch_action = "p2_H"
+kick_action = "p2_L"
+throw_action = "p2_throw"
+
+[node name="mid" parent="Sol Badguy/hitbox" index="0"]
+position = Vector2(76, 18.9474)
+shape = SubResource("RectangleShape2D_hslmm")
+
+[node name="high" parent="Sol Badguy/hitbox" index="1"]
+shape = SubResource("RectangleShape2D_ra40v")
+
+[node name="low" parent="Sol Badguy/hitbox" index="2"]
+position = Vector2(75, 64.2106)
+shape = SubResource("RectangleShape2D_mt4pd")
+
+[node name="air" parent="Sol Badguy/hitbox" index="3"]
+shape = SubResource("RectangleShape2D_msjkh")
+
+[node name="CollisionShape2D" parent="Sol Badguy/hurtbox" index="0"]
+position = Vector2(12.85, -3.1579)
+shape = SubResource("RectangleShape2D_51o5i")
+
+[node name="pushbox" parent="Sol Badguy" index="4"]
+position = Vector2(6, -11.5789)
+shape = SubResource("CapsuleShape2D_xvmwr")
+
 [connection signal="pressed" from="Ui layers/restart button" to="Match Manager" method="_on_restart_button_pressed"]
 
 [editable path="player 1"]
-[editable path="player 2"]
+[editable path="Sol Badguy"]

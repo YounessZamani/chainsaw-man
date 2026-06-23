@@ -9,7 +9,7 @@ func enter():
 	fighter.air_dashable = false
 	fighter.anim.play("Dash")
 	fighter.velocity.y = 0
-
+	fighter.no_switch = false
 	if !fighter.back_dashable:
 		timer = 24
 		if fighter.look_right:

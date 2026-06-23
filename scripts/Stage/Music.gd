@@ -13,7 +13,7 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
-	if !playing and wants_music:
+	if !playing and wants_music :
 		play()
 func update_song():
 	print("changing to song ", pick)
@@ -23,19 +23,22 @@ func update_song():
 	stop()
 	match pick:
 		0:
-			stream = pick1
-			wants_music= true
-			volume_db = -39.807
+			stop()
+			wants_music= false
+			
 		1:
 			stream = pick2
 			wants_music= true
 			volume_db = -30.085
+			play()
 		2:
 			stream = pick3
 			wants_music= true
 			volume_db = -30.085
+			play()
 		3:
-			stop()
-			wants_music= false
-			
-	play()
+			stream = pick1
+			wants_music= true
+			volume_db = -39.807
+			play()
+	

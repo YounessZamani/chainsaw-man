@@ -17,6 +17,7 @@ var health = 200
 var opponent = null
 var grabable = true
 var countered = false
+var no_switch = false
 
 const SPEED = 250
 const JUMP_FORCE = -700
@@ -55,7 +56,7 @@ var hitstop_time = 0
 @onready var hurtbox = $hurtbox
 @onready var anim = $AnimationPlayer
 
-
+@export var default_size = 1
 
 
 func _ready():
@@ -84,7 +85,8 @@ func _physics_process(delta):
 	
 	if !is_on_floor():
 		velocity.y += gravity * delta
-	updateside()
+	if !no_switch:
+		updateside()
 
 	state_machine.physics_update(delta)
 
@@ -251,9 +253,9 @@ func is_in_grab_range():
 		return false
 func apply_hit(move):
 	health -= move["damage"]*scaling/100
-	scale_reduc = combo_hits *10
+	scale_reduc = clamp(combo_hits *5,5 ,100)
 	combo_hits +=1
-	scaling -= scale_reduc
+	scaling *= 0.9
 	print("scaling reduction is : ",scale_reduc," and total scaling is :", scaling )
 	if !look_right:
 		velocity.x = move["push"]
@@ -262,7 +264,7 @@ func apply_hit(move):
 	var launch = move.get("launch", null)
 	if launch != null:
 		velocity.y = launch
-		gravity *= 1.1*combo_hits
+		gravity *= combo_hits
 		state_machine.change_state("Air_Hitstun")
 	else:
 		state_machine.change_state("Hitstun")

@@ -1,7 +1,7 @@
 extends Node
 
 @onready var p1 =$"../player 1"
-@onready var p2 =$"../player 2"
+@onready var p2 =$"../Sol Badguy"
 @onready var win = $"../Ui layers/WIN text"
 @onready var butt =$"../Ui layers/restart button"
 @onready var audio = $"../AudioStreamPlayer"

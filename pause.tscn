@@ -63,14 +63,16 @@ offset_bottom = 163.0
 
 [node name="option 1" type="OptionButton" parent="Panel/MarginContainer/HBoxContainer/option pages/Music"]
 layout_mode = 2
-item_count = 3
+item_count = 4
 selected = 2
-popup/item_0/text = "IRIS OUT"
-popup/item_0/id = 0
+popup/item_0/text = "none"
+popup/item_0/id = 3
 popup/item_1/text = "Berdley basket"
 popup/item_1/id = 1
-popup/item_2/text = "option 3"
+popup/item_2/text = "populi"
 popup/item_2/id = 2
+popup/item_3/text = "IRIS OUT"
+popup/item_3/id = 0
 
 [node name="Sound" type="VBoxContainer" parent="Panel/MarginContainer/HBoxContainer/option pages"]
 layout_mode = 2
