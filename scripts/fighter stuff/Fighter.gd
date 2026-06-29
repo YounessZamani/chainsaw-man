@@ -213,11 +213,13 @@ func updateside():
 
 func update_hitbox_position():
 
+	var sx = abs(hitbox.scale.x)
+
 	if look_right:
-		hitbox.scale.x = 1
+		hitbox.scale.x = sx
 		Sprites.flip_h = false
 	else:
-		hitbox.scale.x = -1
+		hitbox.scale.x = -sx
 		Sprites.flip_h = true
 func find_opponent():
 
@@ -302,3 +304,41 @@ func fit_animation_to_frames(move_data):
 
 
 	anim.speed_scale = float(anim_frames) / float(data_frames)
+func process_events(frame):
+
+	if current_move_data == null:
+		return
+
+	var events = current_move_data.get("events", [])
+
+	for event in events:
+
+		if event.frame != frame:
+			continue
+		process_event(event)
+func process_event(event):
+
+	match event.type:
+
+		"move":
+			process_move_event(event)
+
+		"invincible":
+			process_invincible_event(event)
+
+		_:
+			push_warning("Unknown event: " + event.type)
+func process_move_event(event):
+
+	var vel = event.velocity
+
+	var facing = 1
+
+	if !look_right:
+		facing = -1
+
+	velocity.x = vel[0] * facing
+	velocity.y = vel[1]
+func process_invincible_event(event):
+
+	hurtbox.invincible = event.enabled

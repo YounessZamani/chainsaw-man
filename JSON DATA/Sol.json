@@ -97,7 +97,22 @@
 		"ground_ok": true,
 		"air_ok": false,
 
-		"events": [],
+		"events": [
+	{
+		"frame": 1,
+		"type": "move",
+		"velocity": [250, -1200]
+	},
+	{
+		"frame": 1,
+		"type": "invincible",
+		"enabled": true
+	},
+	{
+		"frame": 11,
+		"type": "invincible",
+		"enabled": false
+	}],
 
 		"cancel": {
 			"on_hit": false,

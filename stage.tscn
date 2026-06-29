@@ -19,7 +19,7 @@ size = Vector2(1144.5, 20)
 size = Vector2(31.5, 633)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hslmm"]
-size = Vector2(68.9456, 30.5263)
+size = Vector2(99.4728, 41.5789)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ra40v"]
 size = Vector2(44.2756, 46.8722)
@@ -293,7 +293,7 @@ kick_action = "p2_L"
 throw_action = "p2_throw"
 
 [node name="mid" parent="Sol Badguy/hitbox" index="0"]
-position = Vector2(76, 18.9474)
+position = Vector2(91.2636, 13.421)
 shape = SubResource("RectangleShape2D_hslmm")
 
 [node name="high" parent="Sol Badguy/hitbox" index="1"]

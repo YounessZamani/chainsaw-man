@@ -27,6 +27,7 @@ func physics_update(_delta):
 	frame +=1 
 	fighter.startup_frame +=1 
 	fighter.action_frame +=1 
+	fighter.process_events(fighter.action_frame)
 	var startup = fighter.current_move_data["startup"]
 	if frame >= startup :
 		machine.change_state("Attack_Active")
